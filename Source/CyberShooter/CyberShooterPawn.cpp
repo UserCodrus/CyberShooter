@@ -52,8 +52,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	// Set defaults
 	MoveSpeed = 1000.0f;
 	CollisionForce = 2000.0f;
-	GunOffset = FVector(90.f, 0.f, 0.f);
-	FireRate = 0.1f;
+	GunOffset = 90.f;
 	FireWeapon = false;
 	bCanFire = true;
 }
@@ -86,12 +85,15 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 	}
 	
 	// Try and fire a shot
-	if (FireWeapon)
+	if (FireWeapon && CurrentWeapon != nullptr)
 	{
 		// Calculate the direction to fire
 		float FireForwardValue = GetInputAxisValue(FireForwardBinding);
 		float FireRightValue = GetInputAxisValue(FireRightBinding);
 		FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
+
+		// Add random rotation based on weapon accuracy
+		//FireDirection = FireDirection.RotateAngleAxis(FMath::RandRange(-CurrentWeapon->FireAccuracy / 2.0f, CurrentWeapon->FireAccuracy / 2.0f), FVector(0.0f, 0.0f, 1.0f));
 
 		FireShot(FireDirection);
 	}
@@ -139,26 +141,45 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 		// If we are pressing fire stick in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
 		{
-			const FRotator FireRotation = FireDirection.Rotation();
-			// Spawn projectile at an offset from this pawn
-			const FVector SpawnLocation = GetActorLocation() + FireRotation.RotateVector(GunOffset);
-
-			UWorld* const World = GetWorld();
-			if (World != NULL)
+			// Spawn a set of projectiles
+			UWorld* world = GetWorld();
+			if (world != nullptr)
 			{
-				World->SpawnActor(ProjectileClass.Get(), &SpawnLocation, &FireRotation);
+				if (CurrentWeapon->NumBullets > 1)
+				{
+					// Spawn multiple bullets in a fan pattern
+					float angle = -(CurrentWeapon->BulletOffset * (CurrentWeapon->NumBullets - 1)) / 2.0f;
+					for (int32 i = 0; i < CurrentWeapon->NumBullets; ++i)
+					{
+						// Add a random variation to the shot angle based on weapon accuracy
+						float random_angle = FMath::RandRange(-CurrentWeapon->FireAccuracy / 2.0f, CurrentWeapon->FireAccuracy / 2.0f);
+						FRotator rotation = FireDirection.RotateAngleAxis(random_angle + angle, FVector(0.0f, 0.0f, 1.0f)).Rotation();
+
+						// Spawn a projectile
+						FVector location = GetActorLocation() + rotation.RotateVector(FVector(GunOffset, 0.0f, 0.0f));
+						world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
+
+						// Increment angle
+						angle += CurrentWeapon->BulletOffset;
+					}
+				}
+				else
+				{
+					// Spawn a single bullet
+					FRotator rotation = FireDirection.RotateAngleAxis(FMath::RandRange(-CurrentWeapon->FireAccuracy / 2.0f, CurrentWeapon->FireAccuracy / 2.0f), FVector(0.0f, 0.0f, 1.0f)).Rotation();
+					FVector location = GetActorLocation() + rotation.RotateVector(FVector(GunOffset, 0.0f, 0.0f));
+					world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
+				}
 			}
 
 			bCanFire = false;
-			World->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, FireRate);
+			world->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, CurrentWeapon->FireRate / 2.0f);
 
 			// try and play the sound if specified
 			/*if (FireSound != nullptr)
 			{
 				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
 			}*/
-
-			bCanFire = false;
 		}
 	}
 }

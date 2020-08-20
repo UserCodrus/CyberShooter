@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Weapon.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CyberShooterPawn.generated.h"
@@ -44,18 +46,15 @@ public:
 protected:
 	/// Weapons ///
 
+	// The currently equipped weapon
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+		UWeapon* CurrentWeapon;
 	// The offset for spawning projectiles
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-		FVector GunOffset;
-	// The time between shots
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-		float FireRate;
+		float GunOffset;
 	// Set to true when the player is firing their weapon
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
 		bool FireWeapon;
-	// The projectile to spawn when firing
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<AActor> ProjectileClass;
 
 	// The speed that the ship moves
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
