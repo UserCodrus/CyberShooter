@@ -9,14 +9,21 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/CollisionProfile.h"
+#include "Kismet/GameplayStatics.h"
 
 ACyberShooterProjectile::ACyberShooterProjectile() 
 {
+	// Create the collision component
+	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ProjectileCollision0"));
+	CollisionComponent->InitSphereRadius(5.0f);
+	CollisionComponent->SetCollisionProfileName("Projectile");
+	CollisionComponent->OnComponentHit.AddDynamic(this, &ACyberShooterProjectile::OnHit);
+	RootComponent = CollisionComponent;
+
 	// Create mesh component for the projectile sphere
-	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh0"));
-	ProjectileMesh->BodyInstance.SetCollisionProfileName("Projectile");
-	ProjectileMesh->OnComponentHit.AddDynamic(this, &ACyberShooterProjectile::OnHit);
-	RootComponent = ProjectileMesh;
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh0"));
+	MeshComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
+	MeshComponent->SetupAttachment(RootComponent);
 
 	// Create the particle system
 	ParticleSystem = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("ProjectileParticles0"));
@@ -25,12 +32,12 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement0"));
-	ProjectileMovement->UpdatedComponent = ProjectileMesh;
-	ProjectileMovement->InitialSpeed = 3000.f;
-	ProjectileMovement->MaxSpeed = 3000.f;
+	ProjectileMovement->UpdatedComponent = CollisionComponent;
+	ProjectileMovement->InitialSpeed = 3000.0f;
+	ProjectileMovement->MaxSpeed = 3000.0f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->bShouldBounce = false;
-	ProjectileMovement->ProjectileGravityScale = 0.f;
+	ProjectileMovement->ProjectileGravityScale = 0.0f;
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
@@ -43,6 +50,16 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
 	}
+	
+	if (!ProjectileMovement->bShouldBounce)
+	{
+		// Create explosion particles
+		FTransform transform;
+		transform.SetLocation(GetActorLocation());
+		transform.SetRotation(GetActorRotation().Quaternion());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestructionParticles, transform);
 
-	Destroy();
+		// Destroy the projectile
+		Destroy();
+	}
 }

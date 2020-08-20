@@ -26,27 +26,14 @@ public:
 	UFUNCTION()
 		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+	// Activate the player's weapon
+	void StartFiring();
+	// Deactivate the player's weapon
+	void StopFiring();
 	// Fire a shot in the given direction
 	void FireShot(FVector FireDirection);
 	// Callback for when the shot timer expires
 	void ShotTimerExpired();
-
-	// The offset for spawning projectiles
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite )
-		FVector GunOffset;
-	// The time between shots
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-		float FireRate;
-	// The speed that the ship moves
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-		float MoveSpeed;
-	// The force mutiplier for collisions
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-		float CollisionForce = 2000.0f;
-
-	// The projectile to spawn when firing
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
-		TSubclassOf<AActor> ProjectileClass;
 
 	// Static names for axis bindings
 	static const FName MoveForwardBinding;
@@ -55,6 +42,28 @@ public:
 	static const FName FireRightBinding;
 
 protected:
+	/// Weapons ///
+
+	// The offset for spawning projectiles
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+		FVector GunOffset;
+	// The time between shots
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+		float FireRate;
+	// Set to true when the player is firing their weapon
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+		bool FireWeapon;
+	// The projectile to spawn when firing
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+		TSubclassOf<AActor> ProjectileClass;
+
+	// The speed that the ship moves
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+		float MoveSpeed;
+	// The force mutiplier for collisions
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+		float CollisionForce;
+
 	/// Components ///
 
 	// The collision capsule

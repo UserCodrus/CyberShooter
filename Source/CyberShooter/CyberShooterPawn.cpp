@@ -51,8 +51,10 @@ ACyberShooterPawn::ACyberShooterPawn()
 
 	// Set defaults
 	MoveSpeed = 1000.0f;
+	CollisionForce = 2000.0f;
 	GunOffset = FVector(90.f, 0.f, 0.f);
 	FireRate = 0.1f;
+	FireWeapon = false;
 	bCanFire = true;
 }
 
@@ -83,13 +85,17 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 		}
 	}
 	
-	// Create fire direction vector
-	const float FireForwardValue = GetInputAxisValue(FireForwardBinding);
-	const float FireRightValue = GetInputAxisValue(FireRightBinding);
-	const FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
-
 	// Try and fire a shot
-	FireShot(FireDirection);
+	if (FireWeapon)
+	{
+		// Calculate the direction to fire
+		float FireForwardValue = GetInputAxisValue(FireForwardBinding);
+		float FireRightValue = GetInputAxisValue(FireRightBinding);
+		FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
+
+		FireShot(FireDirection);
+	}
+
 }
 
 void ACyberShooterPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -101,6 +107,9 @@ void ACyberShooterPawn::SetupPlayerInputComponent(class UInputComponent* PlayerI
 	PlayerInputComponent->BindAxis(MoveRightBinding);
 	PlayerInputComponent->BindAxis(FireForwardBinding);
 	PlayerInputComponent->BindAxis(FireRightBinding);
+
+	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ACyberShooterPawn::StartFiring);
+	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ACyberShooterPawn::StopFiring);
 }
 
 void ACyberShooterPawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -110,6 +119,16 @@ void ACyberShooterPawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, 
 	{
 		OtherComp->AddImpulseAtLocation(GetActorRotation().Vector() * CollisionForce, GetActorLocation());
 	}
+}
+
+void ACyberShooterPawn::StartFiring()
+{
+	FireWeapon = true;
+}
+
+void ACyberShooterPawn::StopFiring()
+{
+	FireWeapon = false;
 }
 
 void ACyberShooterPawn::FireShot(FVector FireDirection)

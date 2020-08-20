@@ -23,20 +23,27 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	/** Returns ProjectileMesh subobject **/
-	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return ProjectileMesh; }
+	/** Returns MeshComponent subobject **/
+	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return MeshComponent; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
 protected:
+	// The projectile's collision
+	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
+		USphereComponent* CollisionComponent;
 	// The mesh for the projectile
 	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
-		UStaticMeshComponent* ProjectileMesh;
+		UStaticMeshComponent* MeshComponent;
 	// The particle trail for the projectile
 	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
 		UParticleSystemComponent* ParticleSystem;
 	// The movement component for the projectile
 	UPROPERTY(Category = Movement, VisibleAnywhere, BlueprintReadOnly)
 		UProjectileMovementComponent* ProjectileMovement;
+
+	// The particle system to spawn when the projectile breaks
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		UParticleSystem* DestructionParticles;
 };
 
