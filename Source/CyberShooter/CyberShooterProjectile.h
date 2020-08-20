@@ -45,5 +45,11 @@ protected:
 	// The particle system to spawn when the projectile breaks
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		UParticleSystem* DestructionParticles;
+	// The number of times the projectile can bounce
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		int32 NumBounces;
+	// The strength of projectile impacts
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		float ImpactForce;
 };
 
