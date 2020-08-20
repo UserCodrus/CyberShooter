@@ -31,10 +31,6 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PlayerMeshComponent"));
 	MeshComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	MeshComponent->SetupAttachment(RootComponent);
-	
-	// Cache our sound effect
-	static ConstructorHelpers::FObjectFinder<USoundBase> FireAudio(TEXT("/Game/TwinStick/Audio/TwinStickFire.TwinStickFire"));
-	FireSound = FireAudio.Object;
 
 	// Set up a fixed camera
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("PlayerSpringArmComponent"));
@@ -138,10 +134,10 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 			World->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, FireRate);
 
 			// try and play the sound if specified
-			if (FireSound != nullptr)
+			/*if (FireSound != nullptr)
 			{
 				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-			}
+			}*/
 
 			bCanFire = false;
 		}

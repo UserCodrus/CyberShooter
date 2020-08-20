@@ -47,9 +47,6 @@ public:
 	// The projectile to spawn when firing
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
 		TSubclassOf<AActor> ProjectileClass;
-	/** Sound to play each time we fire */
-	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
-		class USoundBase* FireSound;
 
 	// Static names for axis bindings
 	static const FName MoveForwardBinding;

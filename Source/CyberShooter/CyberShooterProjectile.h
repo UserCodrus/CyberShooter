@@ -8,19 +8,13 @@
 
 class UProjectileMovementComponent;
 class UStaticMeshComponent;
+class UParticleSystemComponent;
+class USphereComponent;
 
 UCLASS(config=Game)
 class ACyberShooterProjectile : public AActor
 {
 	GENERATED_BODY()
-
-	/** Sphere collision component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* ProjectileMesh;
-
-	/** Projectile movement component */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
-	UProjectileMovementComponent* ProjectileMovement;
 
 public:
 	ACyberShooterProjectile();
@@ -33,5 +27,16 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return ProjectileMesh; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+
+protected:
+	// The mesh for the projectile
+	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
+		UStaticMeshComponent* ProjectileMesh;
+	// The particle trail for the projectile
+	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
+		UParticleSystemComponent* ParticleSystem;
+	// The movement component for the projectile
+	UPROPERTY(Category = Movement, VisibleAnywhere, BlueprintReadOnly)
+		UProjectileMovementComponent* ProjectileMovement;
 };
 
