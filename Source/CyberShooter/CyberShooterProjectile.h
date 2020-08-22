@@ -54,8 +54,14 @@ protected:
 	// The number of times the projectile can bounce
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		int32 NumBounces;
-	// The strength of projectile impacts
+	// If set to true, the projectile will bounce off of pawns as well as the environment
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
-		float ImpactForce;
+		bool BounceOnPawn;
+	// The damage the projectile does to breakables and enemies
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		float Damage;
+	// The strength of projectile impacts of physics objects
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		float Force;
 };
 

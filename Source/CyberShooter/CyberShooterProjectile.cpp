@@ -1,6 +1,8 @@
 // Copyright © 2020 Brian Faubion. All rights reserved.
 
 #include "CyberShooterProjectile.h"
+#include "CyberShooterPawn.h"
+
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
@@ -43,18 +45,30 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	ProjectileMovement->Bounciness = 1.0f;
 	ProjectileMovement->Friction = 0.0f;
 
-	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
 	NumBounces = 0;
-	ImpactForce = 20.0f;
+	Damage = 0.0f;
+	Force = 20000.0f;
 }
 
 void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	ACyberShooterPawn* target = Cast<ACyberShooterPawn>(OtherActor);
+
+	// Handle collisions
+	if (OtherActor != nullptr && OtherActor != this)
 	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * ImpactForce, GetActorLocation());
+		// Collide with pawns
+		if (target != nullptr)
+		{
+			target->ChangeHealth(-Damage);
+		}
+
+		// Collide with physics objects
+		if (OtherComp != nullptr && OtherComp->IsSimulatingPhysics())
+		{
+			OtherComp->AddImpulseAtLocation(GetActorRotation().Vector() * Force, GetActorLocation());
+		}
 	}
 
 	// Play the impact sound
@@ -63,20 +77,22 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	}
 	
+	// Bounce if possible
 	if (NumBounces > 0)
 	{
-		// Reduce the bounce counter
-		NumBounces--;
+		if (BounceOnPawn || target == nullptr)
+		{
+			NumBounces--;
+			return;
+		}
 	}
-	else
-	{
-		// Create explosion particles
-		FTransform transform;
-		transform.SetLocation(GetActorLocation());
-		transform.SetRotation(GetActorRotation().Quaternion());
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestructionParticles, transform);
 
-		// Destroy the projectile
-		Destroy();
-	}
+	// Create explosion particles
+	FTransform transform;
+	transform.SetLocation(GetActorLocation());
+	transform.SetRotation(GetActorRotation().Quaternion());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestructionParticles, transform);
+
+	// Destroy the projectile
+	Destroy();
 }

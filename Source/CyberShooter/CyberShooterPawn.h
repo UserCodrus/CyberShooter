@@ -17,6 +17,12 @@ class ACyberShooterPawn : public APawn
 public:
 	ACyberShooterPawn();
 
+	// Function for changing health
+	UFUNCTION()
+		void ChangeHealth(float Value);
+	// Called when the pawn is killed
+	UFUNCTION()
+		virtual void Kill();
 	// The function that handles the ship hitting obstacles
 	UFUNCTION()
 		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
@@ -34,6 +40,24 @@ public:
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 
 protected:
+	/// Attributes ///
+	
+	// The maximum health of the pawn
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float MaxHealth;
+	// The pawn's current health
+	UPROPERTY(Category = Attributes, EditInstanceOnly, BlueprintReadWrite)
+		float Health;
+	// The maximum momentum for the pawn
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float MaxMomentum;
+	// The pawn's current momentum
+	UPROPERTY(Category = Attributes, EditInstanceOnly, BlueprintReadWrite)
+		float Momentum;
+	// The speed muliplier at max momentum
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float MomentumBonus;
+
 	/// Weapons ///
 
 	// The currently equipped weapon
@@ -46,15 +70,17 @@ protected:
 	UPROPERTY(Category = Weapon, VisibleAnywhere, BlueprintReadWrite)
 		bool FireWeapon;
 
+	// Set to true when the pawn is able to fire its weapon
+	bool CanFire;
+
+	/// Movement ///
+
 	// The speed that the ship moves
 	UPROPERTY(Category = Movement, EditAnywhere, BlueprintReadWrite)
 		float MoveSpeed;
 	// The force mutiplier for physics collisions
 	UPROPERTY(Category = Movement, EditAnywhere, BlueprintReadWrite)
 		float CollisionForce;
-
-	// Set to true when the pawn is able to fire its weapon
-	bool CanFire;
 
 	/// Components ///
 
@@ -64,6 +90,10 @@ protected:
 	// The character's static mesh
 	UPROPERTY(Category = Components, VisibleDefaultsOnly, BlueprintReadOnly)
 		class UStaticMeshComponent* MeshComponent;
+
+	// Particles that spawn on death
+	UPROPERTY(Category = Components, EditAnywhere, BlueprintReadOnly)
+		UParticleSystem* DeathParticles;
 
 	/** Handle for efficient management of ShotTimerExpired timer */
 	FTimerHandle TimerHandle_ShotTimerExpired;

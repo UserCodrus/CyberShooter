@@ -26,10 +26,41 @@ ACyberShooterPawn::ACyberShooterPawn()
 	// Set defaults
 	MoveSpeed = 1000.0f;
 	CollisionForce = 2000.0f;
-	GunOffset = 90.f;
+	GunOffset = 90.0f;
 	FireWeapon = false;
 
+	MaxHealth = 100.0f;
+	Health = MaxHealth;
+	MaxMomentum = 100.0f;
+	Momentum = MaxMomentum;
+	MomentumBonus = 0.0f;
+
 	CanFire = true;
+}
+
+void ACyberShooterPawn::ChangeHealth(float Value)
+{
+	Health += Value;
+
+	if (Health > MaxHealth)
+	{
+		Health = MaxHealth;
+	}
+	else if (Health <= 0.0f)
+	{
+		Kill();
+	}
+}
+
+void ACyberShooterPawn::Kill()
+{
+	// Create death particles
+	FTransform transform;
+	transform.SetLocation(GetActorLocation());
+	transform.SetRotation(GetActorRotation().Quaternion());
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathParticles, transform);
+
+	Destroy();
 }
 
 void ACyberShooterPawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
