@@ -29,7 +29,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	GunOffset = 90.0f;
 	FireWeapon = false;
 
-	MaxHealth = 100.0f;
+	MaxHealth = 10;
 	Health = MaxHealth;
 	MaxMomentum = 100.0f;
 	Momentum = MaxMomentum;
@@ -38,17 +38,29 @@ ACyberShooterPawn::ACyberShooterPawn()
 	CanFire = true;
 }
 
-void ACyberShooterPawn::ChangeHealth(float Value)
+void ACyberShooterPawn::Damage(int32 Value)
 {
-	Health += Value;
+	if (Value > 0)
+	{
+		Health -= Value;
 
-	if (Health > MaxHealth)
-	{
-		Health = MaxHealth;
+		if (Health <= 0.0f)
+		{
+			Kill();
+		}
 	}
-	else if (Health <= 0.0f)
+}
+
+void ACyberShooterPawn::Heal(int32 Value)
+{
+	if (Value > 0)
 	{
-		Kill();
+		Health += Value;
+
+		if (Health > MaxHealth)
+		{
+			Health = MaxHealth;
+		}
 	}
 }
 

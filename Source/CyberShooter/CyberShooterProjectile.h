@@ -59,7 +59,7 @@ protected:
 		bool BounceOnPawn;
 	// The damage the projectile does to breakables and enemies
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
-		float Damage;
+		int32 Damage;
 	// The strength of projectile impacts of physics objects
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		float Force;

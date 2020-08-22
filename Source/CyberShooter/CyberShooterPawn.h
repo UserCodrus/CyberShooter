@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Weapon.h"
+#include "Breakable.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -10,19 +11,19 @@
 
 // A player or enemy character
 UCLASS(Blueprintable)
-class ACyberShooterPawn : public APawn
+class ACyberShooterPawn : public APawn, public IBreakable
 {
 	GENERATED_BODY()
 
 public:
 	ACyberShooterPawn();
 
-	// Function for changing health
-	UFUNCTION()
-		void ChangeHealth(float Value);
-	// Called when the pawn is killed
-	UFUNCTION()
-		virtual void Kill();
+	/// Breakable Interface ///
+	
+	virtual void Damage(int32 Value);
+	virtual void Heal(int32 Value);
+	virtual void Kill();
+
 	// The function that handles the ship hitting obstacles
 	UFUNCTION()
 		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
@@ -36,18 +37,23 @@ public:
 	// Callback for when the shot timer expires
 	void ShotTimerExpired();
 
-	// Accessor functions
+	/// Accessor Functions ///
+
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
+	FORCEINLINE int32 GetHealth() const { return Health; }
+	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
+	FORCEINLINE float GetMomentum() const { return Momentum; }
+	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
 
 protected:
 	/// Attributes ///
 	
 	// The maximum health of the pawn
 	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
-		float MaxHealth;
+		int32 MaxHealth;
 	// The pawn's current health
 	UPROPERTY(Category = Attributes, EditInstanceOnly, BlueprintReadWrite)
-		float Health;
+		int32 Health;
 	// The maximum momentum for the pawn
 	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
 		float MaxMomentum;

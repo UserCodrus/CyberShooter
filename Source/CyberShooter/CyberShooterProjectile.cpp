@@ -53,7 +53,7 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 
 void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	ACyberShooterPawn* target = Cast<ACyberShooterPawn>(OtherActor);
+	IBreakable* target = Cast<IBreakable>(OtherActor);
 
 	// Handle collisions
 	if (OtherActor != nullptr && OtherActor != this)
@@ -61,7 +61,7 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 		// Collide with pawns
 		if (target != nullptr)
 		{
-			target->ChangeHealth(-Damage);
+			target->Damage(Damage);
 		}
 
 		// Collide with physics objects
