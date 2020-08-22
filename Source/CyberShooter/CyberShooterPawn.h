@@ -8,6 +8,7 @@
 #include "GameFramework/Character.h"
 #include "CyberShooterPawn.generated.h"
 
+// A player or enemy character
 UCLASS(Blueprintable)
 class ACyberShooterPawn : public APawn
 {
@@ -16,74 +17,54 @@ class ACyberShooterPawn : public APawn
 public:
 	ACyberShooterPawn();
 
-	virtual void Tick(float DeltaSeconds) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
-	// Accessor functions
-	FORCEINLINE class UStaticMeshComponent* GetShipMeshComponent() const { return MeshComponent; }
-	FORCEINLINE class UCameraComponent* GetCameraComponent() const { return CameraComponent; }
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return SpringArmComponent; }
-
 	// The function that handles the ship hitting obstacles
 	UFUNCTION()
-		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	// Activate the player's weapon
+	// Activate the pawn's weapon
 	void StartFiring();
-	// Deactivate the player's weapon
+	// Deactivate the pawn's weapon
 	void StopFiring();
-	// Fire a shot in the given direction
+	// Fire the pawn's current weapon
 	void FireShot(FVector FireDirection);
 	// Callback for when the shot timer expires
 	void ShotTimerExpired();
 
-	// Static names for axis bindings
-	static const FName MoveForwardBinding;
-	static const FName MoveRightBinding;
-	static const FName FireForwardBinding;
-	static const FName FireRightBinding;
+	// Accessor functions
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 
 protected:
 	/// Weapons ///
 
 	// The currently equipped weapon
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = Weapon, EditAnywhere, BlueprintReadWrite)
 		UWeapon* CurrentWeapon;
 	// The offset for spawning projectiles
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = Weapon, EditAnywhere, BlueprintReadWrite)
 		float GunOffset;
-	// Set to true when the player is firing their weapon
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	// Set to true when the pawn is firing its weapon
+	UPROPERTY(Category = Weapon, VisibleAnywhere, BlueprintReadWrite)
 		bool FireWeapon;
 
 	// The speed that the ship moves
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = Movement, EditAnywhere, BlueprintReadWrite)
 		float MoveSpeed;
-	// The force mutiplier for collisions
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	// The force mutiplier for physics collisions
+	UPROPERTY(Category = Movement, EditAnywhere, BlueprintReadWrite)
 		float CollisionForce;
+
+	// Set to true when the pawn is able to fire its weapon
+	bool CanFire;
 
 	/// Components ///
 
 	// The collision capsule
-	UPROPERTY(Category = Component, VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Category = Components, VisibleDefaultsOnly, BlueprintReadOnly)
 		class UCapsuleComponent* CollisionComponent;
 	// The character's static mesh
-	UPROPERTY(Category = Mesh, VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Category = Components, VisibleDefaultsOnly, BlueprintReadOnly)
 		class UStaticMeshComponent* MeshComponent;
-	// The game camera
-	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly)
-		class UCameraComponent* CameraComponent;
-	// The camera spring arm
-	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly)
-		class USpringArmComponent* SpringArmComponent;
 
-	// The character movement component
-	//UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly)
-		//UPawnMovementComponent* MovementComponent;
-
-	/* Flag to control firing  */
-	uint32 bCanFire : 1;
 	/** Handle for efficient management of ShotTimerExpired timer */
 	FTimerHandle TimerHandle_ShotTimerExpired;
 };

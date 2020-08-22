@@ -2,22 +2,13 @@
 
 #include "CyberShooterPawn.h"
 #include "CyberShooterProjectile.h"
+
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
-#include "Camera/CameraComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Components/InputComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-//#include "GameFramework/PawnMovementComponent.h"
 #include "Engine/CollisionProfile.h"
-#include "Engine/StaticMesh.h"
 #include "Kismet/GameplayStatics.h"
-
-const FName ACyberShooterPawn::MoveForwardBinding("MoveForward");
-const FName ACyberShooterPawn::MoveRightBinding("MoveRight");
-const FName ACyberShooterPawn::FireForwardBinding("FireForward");
-const FName ACyberShooterPawn::FireRightBinding("FireRight");
 
 ACyberShooterPawn::ACyberShooterPawn()
 {	
@@ -32,88 +23,19 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MeshComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	MeshComponent->SetupAttachment(RootComponent);
 
-	// Set up a fixed camera
-	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("PlayerSpringArmComponent"));
-	SpringArmComponent->SetupAttachment(RootComponent);
-	SpringArmComponent->SetUsingAbsoluteRotation(true);
-	SpringArmComponent->TargetArmLength = 1200.f;
-	SpringArmComponent->SetRelativeRotation(FRotator(-80.f, 0.f, 0.f));
-	SpringArmComponent->bDoCollisionTest = false;
-
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("PlayerTopDownCamera"));
-	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
-	CameraComponent->bUsePawnControlRotation = false;
-
-	// Create the movement component
-	//MovementComponent = CreateDefaultSubobject<UPawnMovementComponent>(TEXT("ShipMovement"));
-	//MovementComponent->SetUpdatedComponent(RootComponent);
-	//MovementComponent->UpdatedComponent = RootComponent;
-
 	// Set defaults
 	MoveSpeed = 1000.0f;
 	CollisionForce = 2000.0f;
 	GunOffset = 90.f;
 	FireWeapon = false;
-	bCanFire = true;
-}
 
-void ACyberShooterPawn::Tick(float DeltaSeconds)
-{
-	// Find movement direction
-	const float ForwardValue = GetInputAxisValue(MoveForwardBinding);
-	const float RightValue = GetInputAxisValue(MoveRightBinding);
-
-	// Clamp max size so that (X=1, Y=1) doesn't cause faster movement in diagonal directions
-	const FVector MoveDirection = FVector(ForwardValue, RightValue, 0.f).GetClampedToMaxSize(1.0f);
-
-	// Calculate  movement
-	const FVector Movement = MoveDirection * MoveSpeed * DeltaSeconds;
-
-	// If non-zero size, move this actor
-	if (Movement.SizeSquared() > 0.0f)
-	{
-		const FRotator NewRotation = Movement.Rotation();
-		FHitResult Hit(1.f);
-		RootComponent->MoveComponent(Movement, NewRotation, true, &Hit);
-		
-		if (Hit.IsValidBlockingHit())
-		{
-			const FVector Normal2D = Hit.Normal.GetSafeNormal2D();
-			const FVector Deflection = FVector::VectorPlaneProject(Movement, Normal2D) * (1.f - Hit.Time);
-			RootComponent->MoveComponent(Deflection, NewRotation, true);
-		}
-	}
-	
-	// Try and fire a shot
-	if (FireWeapon && CurrentWeapon != nullptr)
-	{
-		// Calculate the direction to fire
-		float FireForwardValue = GetInputAxisValue(FireForwardBinding);
-		float FireRightValue = GetInputAxisValue(FireRightBinding);
-		FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
-
-		FireShot(FireDirection);
-	}
-}
-
-void ACyberShooterPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
-{
-	check(PlayerInputComponent);
-
-	// Set up gameplay key bindings
-	PlayerInputComponent->BindAxis(MoveForwardBinding);
-	PlayerInputComponent->BindAxis(MoveRightBinding);
-	PlayerInputComponent->BindAxis(FireForwardBinding);
-	PlayerInputComponent->BindAxis(FireRightBinding);
-
-	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Pressed, this, &ACyberShooterPawn::StartFiring);
-	PlayerInputComponent->BindAction("Fire", EInputEvent::IE_Released, this, &ACyberShooterPawn::StopFiring);
+	CanFire = true;
 }
 
 void ACyberShooterPawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
+	// Add an impulse when a pysics object is hit
+	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetActorRotation().Vector() * CollisionForce, GetActorLocation());
 	}
@@ -131,8 +53,7 @@ void ACyberShooterPawn::StopFiring()
 
 void ACyberShooterPawn::FireShot(FVector FireDirection)
 {
-	// If it's ok to fire again
-	if (bCanFire == true)
+	if (CanFire == true)
 	{
 		// If we are pressing fire stick in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
@@ -168,7 +89,7 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 				}
 			}
 
-			bCanFire = false;
+			CanFire = false;
 			world->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, CurrentWeapon->FireRate / 2.0f);
 		}
 	}
@@ -176,6 +97,6 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 
 void ACyberShooterPawn::ShotTimerExpired()
 {
-	bCanFire = true;
+	CanFire = true;
 }
 
