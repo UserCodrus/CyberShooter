@@ -94,6 +94,10 @@ protected:
 	// Particles that spawn on death
 	UPROPERTY(Category = Components, EditAnywhere, BlueprintReadOnly)
 		UParticleSystem* DeathParticles;
+	// the sound that plays on death
+	UPROPERTY(Category = Components, EditAnywhere, BlueprintReadOnly)
+		USoundBase* DeathSound;
+
 
 	/** Handle for efficient management of ShotTimerExpired timer */
 	FTimerHandle TimerHandle_ShotTimerExpired;

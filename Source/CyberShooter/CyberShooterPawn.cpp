@@ -55,10 +55,19 @@ void ACyberShooterPawn::ChangeHealth(float Value)
 void ACyberShooterPawn::Kill()
 {
 	// Create death particles
-	FTransform transform;
-	transform.SetLocation(GetActorLocation());
-	transform.SetRotation(GetActorRotation().Quaternion());
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathParticles, transform);
+	if (DeathParticles != nullptr)
+	{
+		FTransform transform;
+		transform.SetLocation(GetActorLocation());
+		transform.SetRotation(GetActorRotation().Quaternion());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DeathParticles, transform);
+	}
+
+	// Play the death sound
+	if (DeathSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
 
 	Destroy();
 }

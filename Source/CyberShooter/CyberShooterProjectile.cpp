@@ -88,10 +88,13 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	}
 
 	// Create explosion particles
-	FTransform transform;
-	transform.SetLocation(GetActorLocation());
-	transform.SetRotation(GetActorRotation().Quaternion());
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestructionParticles, transform);
+	if (DestructionParticles != nullptr)
+	{
+		FTransform transform;
+		transform.SetLocation(GetActorLocation());
+		transform.SetRotation(GetActorRotation().Quaternion());
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestructionParticles, transform);
+	}
 
 	// Destroy the projectile
 	Destroy();
