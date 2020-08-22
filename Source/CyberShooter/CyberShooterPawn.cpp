@@ -9,10 +9,10 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+//#include "GameFramework/PawnMovementComponent.h"
 #include "Engine/CollisionProfile.h"
 #include "Engine/StaticMesh.h"
 #include "Kismet/GameplayStatics.h"
-#include "Sound/SoundBase.h"
 
 const FName ACyberShooterPawn::MoveForwardBinding("MoveForward");
 const FName ACyberShooterPawn::MoveRightBinding("MoveRight");
@@ -45,9 +45,9 @@ ACyberShooterPawn::ACyberShooterPawn()
 	CameraComponent->bUsePawnControlRotation = false;
 
 	// Create the movement component
-	//ShipMovementComponent = CreateDefaultSubobject<UPawnMovementComponent>(TEXT("ShipMovement"));
-	//ShipMovementComponent->SetUpdatedComponent(RootComponent);
-	//ShipMovementComponent->UpdatedComponent = RootComponent;
+	//MovementComponent = CreateDefaultSubobject<UPawnMovementComponent>(TEXT("ShipMovement"));
+	//MovementComponent->SetUpdatedComponent(RootComponent);
+	//MovementComponent->UpdatedComponent = RootComponent;
 
 	// Set defaults
 	MoveSpeed = 1000.0f;
@@ -92,12 +92,8 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 		float FireRightValue = GetInputAxisValue(FireRightBinding);
 		FVector FireDirection = FVector(FireForwardValue, FireRightValue, 0.f);
 
-		// Add random rotation based on weapon accuracy
-		//FireDirection = FireDirection.RotateAngleAxis(FMath::RandRange(-CurrentWeapon->FireAccuracy / 2.0f, CurrentWeapon->FireAccuracy / 2.0f), FVector(0.0f, 0.0f, 1.0f));
-
 		FireShot(FireDirection);
 	}
-
 }
 
 void ACyberShooterPawn::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -174,12 +170,6 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 
 			bCanFire = false;
 			world->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, CurrentWeapon->FireRate / 2.0f);
-
-			// try and play the sound if specified
-			/*if (FireSound != nullptr)
-			{
-				UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
-			}*/
 		}
 	}
 }

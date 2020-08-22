@@ -10,6 +10,7 @@
 #include "Engine/StaticMesh.h"
 #include "Engine/CollisionProfile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundBase.h"
 
 ACyberShooterProjectile::ACyberShooterProjectile() 
 {
@@ -54,6 +55,12 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * ImpactForce, GetActorLocation());
+	}
+
+	// Play the impact sound
+	if (ImpactSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	}
 	
 	if (NumBounces > 0)

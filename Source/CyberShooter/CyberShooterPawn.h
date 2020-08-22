@@ -78,6 +78,10 @@ protected:
 	UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly)
 		class USpringArmComponent* SpringArmComponent;
 
+	// The character movement component
+	//UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly)
+		//UPawnMovementComponent* MovementComponent;
+
 	/* Flag to control firing  */
 	uint32 bCanFire : 1;
 	/** Handle for efficient management of ShotTimerExpired timer */

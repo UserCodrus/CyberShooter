@@ -10,6 +10,7 @@ class UProjectileMovementComponent;
 class UStaticMeshComponent;
 class UParticleSystemComponent;
 class USphereComponent;
+class USoundBase;
 
 UCLASS(config=Game)
 class ACyberShooterProjectile : public AActor
@@ -38,13 +39,18 @@ protected:
 	// The particle trail for the projectile
 	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
 		UParticleSystemComponent* ParticleSystem;
+	// The particle system to spawn when the projectile breaks
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		UParticleSystem* DestructionParticles;
+
 	// The movement component for the projectile
 	UPROPERTY(Category = Movement, VisibleAnywhere, BlueprintReadOnly)
 		UProjectileMovementComponent* ProjectileMovement;
 
-	// The particle system to spawn when the projectile breaks
-	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
-		UParticleSystem* DestructionParticles;
+	// The sound played when hitting an object
+	UPROPERTY(Category = Sound, EditDefaultsOnly, BlueprintReadOnly)
+		USoundBase* ImpactSound;
+	
 	// The number of times the projectile can bounce
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		int32 NumBounces;
