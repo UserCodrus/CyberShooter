@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Breakable.h"
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CyberShooterProjectile.generated.h"
@@ -20,9 +22,12 @@ class ACyberShooterProjectile : public AActor
 public:
 	ACyberShooterProjectile();
 
-	/** Function to handle the projectile hitting something */
+	// Mark what spawned the projectile
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+		void SetSource(AActor* ProjectileSource);
+	// Function to handle the projectile hitting something
+	UFUNCTION()
+		void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 	/** Returns MeshComponent subobject **/
 	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return MeshComponent; }
@@ -60,8 +65,15 @@ protected:
 	// The damage the projectile does to breakables and enemies
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		int32 Damage;
+	// The damage type of the projectile
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = EDamageType))
+		int32 DamageType;
 	// The strength of projectile impacts of physics objects
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		float Force;
+
+	// the actor that spawned this projectile
+	UPROPERTY()
+		AActor* Source;
 };
 

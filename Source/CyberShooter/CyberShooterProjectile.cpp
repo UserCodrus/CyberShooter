@@ -48,20 +48,30 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	InitialLifeSpan = 3.0f;
 	NumBounces = 0;
 	Damage = 0.0f;
+	DamageType = 0;
 	Force = 20000.0f;
+
+	Source = nullptr;
+}
+
+void ACyberShooterProjectile::SetSource(AActor* ProjectileSource)
+{
+	if (Source == nullptr)
+	{
+		Source = ProjectileSource;
+	}
 }
 
 void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	IBreakable* target = Cast<IBreakable>(OtherActor);
-
 	// Handle collisions
 	if (OtherActor != nullptr && OtherActor != this)
 	{
 		// Collide with pawns
+		IBreakable* target = Cast<IBreakable>(OtherActor);
 		if (target != nullptr)
 		{
-			target->Damage(Damage);
+			target->Damage(Damage, DamageType, this, Source);
 		}
 
 		// Collide with physics objects
@@ -80,7 +90,7 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	// Bounce if possible
 	if (NumBounces > 0)
 	{
-		if (BounceOnPawn || target == nullptr)
+		if (BounceOnPawn || Cast<ACyberShooterPawn>(OtherActor) == nullptr)
 		{
 			NumBounces--;
 			return;

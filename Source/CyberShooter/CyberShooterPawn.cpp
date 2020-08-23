@@ -10,6 +10,8 @@
 #include "Engine/CollisionProfile.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "Engine/Engine.h"
+
 ACyberShooterPawn::ACyberShooterPawn()
 {	
 	// Create the collision component
@@ -30,23 +32,52 @@ ACyberShooterPawn::ACyberShooterPawn()
 	FireWeapon = false;
 
 	MaxHealth = 10;
-	Health = MaxHealth;
+	Health = 0;
 	MaxMomentum = 100.0f;
 	Momentum = MaxMomentum;
 	MomentumBonus = 0.0f;
 
+	DamageDirection = FVector(1.0f, 0.0f, 0.0f);
+	MinimumDamageAngle = -190.0f;
+	MaximumDamageAngle = 190.0f;
+	DamageImmunity = 0;
+
 	CanFire = true;
 }
 
-void ACyberShooterPawn::Damage(int32 Value)
+void ACyberShooterPawn::BeginPlay()
 {
-	if (Value > 0)
-	{
-		Health -= Value;
+	Super::BeginPlay();
 
-		if (Health <= 0.0f)
+	Health = MaxHealth;
+}
+
+void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin)
+{
+	if (!(DamageImmunity & (uint8)DamageType))
+	{
+		if (Source != nullptr)
 		{
-			Kill();
+			// Calculate the angle of the incoming damage on the Z axis
+			FVector source_direction = GetActorLocation() - Source->GetActorLocation();
+			FVector damage_direction = GetActorRotation().RotateVector(DamageDirection);
+			float angle = (source_direction.Rotation() - damage_direction.Rotation()).Clamp().Yaw - 180.0f;
+
+			// Determine if the hit failed
+			if (angle < MinimumDamageAngle || angle > MaximumDamageAngle)
+			{
+				return;
+			}
+		}
+
+		if (Value > 0)
+		{
+			Health -= Value;
+
+			if (Health <= 0.0f)
+			{
+				Kill();
+			}
 		}
 	}
 }

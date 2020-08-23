@@ -18,9 +18,11 @@ class ACyberShooterPawn : public APawn, public IBreakable
 public:
 	ACyberShooterPawn();
 
+	virtual void BeginPlay() override;
+
 	/// Breakable Interface ///
 	
-	virtual void Damage(int32 Value);
+	virtual void Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin);
 	virtual void Heal(int32 Value);
 	virtual void Kill();
 
@@ -63,6 +65,19 @@ protected:
 	// The speed muliplier at max momentum
 	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
 		float MomentumBonus;
+
+	// Flags for which types of damage can affect the pawn
+	UPROPERTY(Category = Attributes, EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageType))
+		int32 DamageImmunity;
+	// The direction from which the pawn can be damaged
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		FVector DamageDirection;
+	// The minimum damage angle
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float MinimumDamageAngle;
+	// The maximum damage angle
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float MaximumDamageAngle;
 
 	/// Weapons ///
 
