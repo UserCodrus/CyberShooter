@@ -40,6 +40,8 @@ public:
 	void ShotTimerExpired();
 
 	/// Accessor Functions ///
+	
+	void ChangeMomentum(float Value);
 
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 	FORCEINLINE int32 GetHealth() const { return Health; }
@@ -65,6 +67,13 @@ protected:
 	// The speed muliplier at max momentum
 	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
 		float MomentumBonus;
+
+	// The momentum reward for killing this pawn
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float MomentumReward;
+	// The momentum lost upon taking damage
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float MomentumPenalty;
 
 	// Flags for which types of damage can affect the pawn
 	UPROPERTY(Category = Attributes, EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageType))

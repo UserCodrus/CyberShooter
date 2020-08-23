@@ -2,6 +2,7 @@
 
 #include "CyberShooterPawn.h"
 #include "CyberShooterProjectile.h"
+#include "CyberShooterPlayer.h"
 
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
@@ -36,6 +37,8 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MaxMomentum = 100.0f;
 	Momentum = MaxMomentum;
 	MomentumBonus = 0.0f;
+	MomentumReward = 30.0f;
+	MomentumPenalty = 0.0f;
 
 	DamageDirection = FVector(1.0f, 0.0f, 0.0f);
 	MinimumDamageAngle = -190.0f;
@@ -54,7 +57,7 @@ void ACyberShooterPawn::BeginPlay()
 
 void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin)
 {
-	if (!(DamageImmunity & (uint8)DamageType))
+	if (!(DamageImmunity & DamageType))
 	{
 		if (Source != nullptr)
 		{
@@ -69,13 +72,22 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 				return;
 			}
 		}
-
+		
 		if (Value > 0)
 		{
 			Health -= Value;
+			ChangeMomentum(MomentumPenalty);
 
 			if (Health <= 0.0f)
 			{
+				// Notify the player of kills
+				ACyberShooterPlayer* player = Cast<ACyberShooterPlayer>(Origin);
+				if (player != nullptr)
+				{
+					GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, "Enemy killed");
+					player->ChangeMomentum(MomentumReward);
+				}
+
 				Kill();
 			}
 		}
@@ -138,7 +150,7 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 {
 	if (CanFire == true)
 	{
-		// If we are pressing fire stick in a direction
+		// If we are aiming in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
 		{
 			// Spawn a set of projectiles
@@ -157,7 +169,16 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 
 						// Spawn a projectile
 						FVector location = GetActorLocation() + rotation.RotateVector(FVector(GunOffset, 0.0f, 0.0f));
-						world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
+						if (!CurrentWeapon->FanBullets)
+						{
+							rotation = FireDirection.RotateAngleAxis(random_angle, FVector(0.0f, 0.0f, 1.0f)).Rotation();
+						}
+
+						AActor* projectile = world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
+						if (projectile != nullptr)
+						{
+							Cast<ACyberShooterProjectile>(projectile)->SetSource(this);
+						}
 
 						// Increment angle
 						angle += CurrentWeapon->BulletOffset;
@@ -183,3 +204,16 @@ void ACyberShooterPawn::ShotTimerExpired()
 	CanFire = true;
 }
 
+void ACyberShooterPawn::ChangeMomentum(float Value)
+{
+	Momentum += Value;
+
+	if (Momentum > MaxMomentum)
+	{
+		Momentum = MaxMomentum;
+	}
+	else if (Momentum < 0.0f)
+	{
+		Momentum = 0.0f;
+	}
+}
