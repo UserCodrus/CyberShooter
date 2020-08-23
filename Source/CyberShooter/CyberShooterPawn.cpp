@@ -27,7 +27,6 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MeshComponent->SetupAttachment(RootComponent);
 
 	// Set defaults
-	MoveSpeed = 1000.0f;
 	CollisionForce = 2000.0f;
 	GunOffset = 90.0f;
 	FireWeapon = false;

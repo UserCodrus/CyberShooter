@@ -105,9 +105,6 @@ protected:
 
 	/// Movement ///
 
-	// The speed that the ship moves
-	UPROPERTY(Category = Movement, EditAnywhere, BlueprintReadWrite)
-		float MoveSpeed;
 	// The force mutiplier for physics collisions
 	UPROPERTY(Category = Movement, EditAnywhere, BlueprintReadWrite)
 		float CollisionForce;
