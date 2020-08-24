@@ -35,26 +35,36 @@ public:
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
 protected:
+	// Apply damage and physics effects
+	void ApplyImpact(AActor* OtherActor, UPrimitiveComponent* OtherComp);
+
 	// The projectile's collision
-	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly)
 		USphereComponent* CollisionComponent;
 	// The mesh for the projectile
-	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly)
 		UStaticMeshComponent* MeshComponent;
 	// The particle trail for the projectile
-	UPROPERTY(Category = Projectile, VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = Components, VisibleAnywhere, BlueprintReadOnly)
 		UParticleSystemComponent* ParticleSystem;
-	// The particle system to spawn when the projectile breaks
-	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
-		UParticleSystem* DestructionParticles;
 
 	// The movement component for the projectile
 	UPROPERTY(Category = Movement, VisibleAnywhere, BlueprintReadOnly)
 		UProjectileMovementComponent* ProjectileMovement;
 
-	// The sound played when hitting an object
+	// The particle system to spawn when the projectile breaks
+	UPROPERTY(Category = Particles, EditDefaultsOnly, BlueprintReadOnly)
+		UParticleSystem* DestructionParticles;
+	// The particle system to spawn when bouncing off of a surface
+	UPROPERTY(Category = Particles, EditDefaultsOnly, BlueprintReadOnly)
+		UParticleSystem* BounceParticles;
+
+	// The sound played when the bullet bounces
 	UPROPERTY(Category = Sound, EditDefaultsOnly, BlueprintReadOnly)
-		USoundBase* ImpactSound;
+		USoundBase* BounceSound;
+	// The sound played when the bullet is destroyed
+	UPROPERTY(Category = Sound, EditDefaultsOnly, BlueprintReadOnly)
+		USoundBase* DestructionSound;
 	
 	// The number of times the projectile can bounce
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
@@ -62,6 +72,13 @@ protected:
 	// If set to true, the projectile will bounce off of pawns as well as the environment
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		bool BounceOnPawn;
+	// If set to true, each bounce will count as a hit for dealing damage or exploding
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		bool HitOnBounce;
+	// The radius of projectile explosions
+	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
+		float ExplosionRadius;
+	
 	// The damage the projectile does to breakables and enemies
 	UPROPERTY(Category = Projectile, EditDefaultsOnly, BlueprintReadOnly)
 		int32 Damage;
@@ -73,7 +90,7 @@ protected:
 		float Force;
 
 	// the actor that spawned this projectile
-	UPROPERTY()
+	UPROPERTY(VisibleInstanceOnly)
 		AActor* Source;
 };
 

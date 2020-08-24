@@ -47,6 +47,9 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 
 	InitialLifeSpan = 3.0f;
 	NumBounces = 0;
+	BounceOnPawn = false;
+	ExplosionRadius = 0.0f;
+	HitOnBounce = true;
 	Damage = 0.0f;
 	DamageType = 0;
 	Force = 20000.0f;
@@ -67,45 +70,102 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	// Handle collisions
 	if (OtherActor != nullptr && OtherActor != this)
 	{
-		// Collide with pawns
+		// Bounce if possible
+		if (NumBounces > 0)
+		{
+			if (BounceOnPawn || Cast<ACyberShooterPawn>(OtherActor) == nullptr)
+			{
+				// Apply damage and physics
+				if (HitOnBounce)
+				{
+					ApplyImpact(OtherActor, OtherComp);
+				}
+
+				// Play the bounce sound
+				if (BounceSound != nullptr)
+				{
+					UGameplayStatics::PlaySoundAtLocation(this, BounceSound, GetActorLocation());
+				}
+
+				// Create bounce particles
+				if (BounceParticles != nullptr)
+				{
+					FTransform transform;
+					transform.SetLocation(GetActorLocation());
+					transform.SetRotation(GetActorRotation().Quaternion());
+					UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BounceParticles, transform);
+				}
+
+				NumBounces--;
+				return;
+			}
+		}
+
+		// Apply damage
+		ApplyImpact(OtherActor, OtherComp);
+
+		// Play the destruction sound
+		if (DestructionSound != nullptr)
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, DestructionSound, GetActorLocation());
+		}
+
+		// Create destruction particles
+		if (DestructionParticles != nullptr)
+		{
+			FTransform transform;
+			transform.SetLocation(GetActorLocation());
+			transform.SetRotation(GetActorRotation().Quaternion());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestructionParticles, transform);
+		}
+
+		// Destroy the projectile
+		Destroy();
+	}
+}
+
+void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponent* OtherComp)
+{
+	if (ExplosionRadius <= 0.0f)
+	{
+		// Deal damage to breakables
 		IBreakable* target = Cast<IBreakable>(OtherActor);
 		if (target != nullptr)
 		{
 			target->Damage(Damage, DamageType, this, Source);
 		}
 
-		// Collide with physics objects
+		// Apply physics
 		if (OtherComp != nullptr && OtherComp->IsSimulatingPhysics())
 		{
 			OtherComp->AddImpulseAtLocation(GetActorRotation().Vector() * Force, GetActorLocation());
 		}
 	}
+	else
+	{
+		// Get all actors within the explosion radius
+		TArray<TEnumAsByte<EObjectTypeQuery>> types;
+		TArray<AActor*> ignore;
+		TArray<AActor*> actors;
+		UKismetSystemLibrary::SphereOverlapActors(GetWorld(), GetActorLocation(), ExplosionRadius, types, AActor::StaticClass(), ignore, actors);
 
-	// Play the impact sound
-	if (ImpactSound != nullptr)
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
-	}
-	
-	// Bounce if possible
-	if (NumBounces > 0)
-	{
-		if (BounceOnPawn || Cast<ACyberShooterPawn>(OtherActor) == nullptr)
+		// Affect every actor in range of the explosion
+		for (int32 i = 0; i < actors.Num(); ++i)
 		{
-			NumBounces--;
-			return;
+			// Damage breakables
+			IBreakable* target = Cast<IBreakable>(actors[i]);
+			if (target != nullptr)
+			{
+				target->Damage(Damage, DamageType, this, Source);
+			}
+
+			// Apply physics
+			UPrimitiveComponent* component = Cast<UPrimitiveComponent>(actors[i]->GetRootComponent());
+			if (component != nullptr && component->IsSimulatingPhysics())
+			{
+				FVector direction = actors[i]->GetActorLocation() - GetActorLocation();
+				component->AddImpulseAtLocation(direction.GetSafeNormal() * Force, GetActorLocation());
+			}
 		}
 	}
-
-	// Create explosion particles
-	if (DestructionParticles != nullptr)
-	{
-		FTransform transform;
-		transform.SetLocation(GetActorLocation());
-		transform.SetRotation(GetActorRotation().Quaternion());
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), DestructionParticles, transform);
-	}
-
-	// Destroy the projectile
-	Destroy();
 }
