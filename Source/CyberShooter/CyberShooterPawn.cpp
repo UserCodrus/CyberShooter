@@ -27,7 +27,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MeshComponent->SetupAttachment(RootComponent);
 
 	// Set defaults
-	CollisionForce = 2000.0f;
+	CollisionForce = 40.0f;
 	GunOffset = 90.0f;
 	FireWeapon = false;
 
@@ -128,10 +128,10 @@ void ACyberShooterPawn::Kill()
 
 void ACyberShooterPawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	// Add an impulse when a pysics object is hit
+	// Add an impulse when a physics object is hit
 	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
 	{
-		OtherComp->AddImpulseAtLocation(GetActorRotation().Vector() * CollisionForce, GetActorLocation());
+		OtherComp->AddImpulseAtLocation(GetVelocity() * CollisionForce, GetActorLocation());
 	}
 }
 
