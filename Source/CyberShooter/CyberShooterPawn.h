@@ -92,7 +92,7 @@ protected:
 
 	// The currently equipped weapon
 	UPROPERTY(Category = Weapon, EditAnywhere, BlueprintReadWrite)
-		UWeapon* CurrentWeapon;
+		UWeapon* Weapon;
 	// The offset for spawning projectiles
 	UPROPERTY(Category = Weapon, EditAnywhere, BlueprintReadWrite)
 		float GunOffset;

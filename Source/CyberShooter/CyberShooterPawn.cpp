@@ -147,7 +147,7 @@ void ACyberShooterPawn::StopFiring()
 
 void ACyberShooterPawn::FireShot(FVector FireDirection)
 {
-	if (CanFire == true)
+	if (CanFire == true && Weapon != nullptr)
 	{
 		// If we are aiming in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
@@ -156,48 +156,33 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 			UWorld* world = GetWorld();
 			if (world != nullptr)
 			{
-				if (CurrentWeapon->NumBullets > 1)
+				float angle = -(Weapon->BulletOffset * (Weapon->NumBullets - 1)) / 2.0f;
+				for (int32 i = 0; i < Weapon->NumBullets; ++i)
 				{
-					// Spawn multiple bullets in a fan pattern
-					float angle = -(CurrentWeapon->BulletOffset * (CurrentWeapon->NumBullets - 1)) / 2.0f;
-					for (int32 i = 0; i < CurrentWeapon->NumBullets; ++i)
-					{
-						// Add a random variation to the shot angle based on weapon accuracy
-						float random_angle = FMath::RandRange(-CurrentWeapon->FireAccuracy / 2.0f, CurrentWeapon->FireAccuracy / 2.0f);
-						FRotator rotation = FireDirection.RotateAngleAxis(random_angle + angle, FVector(0.0f, 0.0f, 1.0f)).Rotation();
+					// Add a random variation to the shot angle based on weapon accuracy
+					float random_angle = FMath::RandRange(-Weapon->FireAccuracy / 2.0f, Weapon->FireAccuracy / 2.0f);
+					FRotator rotation = FireDirection.RotateAngleAxis(random_angle + angle, FVector(0.0f, 0.0f, 1.0f)).Rotation();
 
-						// Spawn a projectile
-						FVector location = GetActorLocation() + rotation.RotateVector(FVector(GunOffset, 0.0f, 0.0f));
-						if (!CurrentWeapon->FanBullets)
-						{
-							rotation = FireDirection.RotateAngleAxis(random_angle, FVector(0.0f, 0.0f, 1.0f)).Rotation();
-						}
-
-						AActor* projectile = world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
-						if (projectile != nullptr)
-						{
-							Cast<ACyberShooterProjectile>(projectile)->SetSource(this);
-						}
-
-						// Increment angle
-						angle += CurrentWeapon->BulletOffset;
-					}
-				}
-				else
-				{
-					// Spawn a single bullet
-					FRotator rotation = FireDirection.RotateAngleAxis(FMath::RandRange(-CurrentWeapon->FireAccuracy / 2.0f, CurrentWeapon->FireAccuracy / 2.0f), FVector(0.0f, 0.0f, 1.0f)).Rotation();
+					// Spawn a projectile
 					FVector location = GetActorLocation() + rotation.RotateVector(FVector(GunOffset, 0.0f, 0.0f));
-					AActor* projectile = world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
+					if (!Weapon->FanBullets)
+					{
+						rotation = FireDirection.RotateAngleAxis(random_angle, FVector(0.0f, 0.0f, 1.0f)).Rotation();
+					}
+
+					AActor* projectile = world->SpawnActor(Weapon->Projectile.Get(), &location, &rotation);
 					if (projectile != nullptr)
 					{
 						Cast<ACyberShooterProjectile>(projectile)->SetSource(this);
 					}
+
+					// Increment angle
+					angle += Weapon->BulletOffset;
 				}
 			}
 
 			CanFire = false;
-			world->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, CurrentWeapon->FireRate / 2.0f);
+			world->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, Weapon->FireRate / 2.0f);
 		}
 	}
 }
