@@ -188,7 +188,11 @@ void ACyberShooterPawn::FireShot(FVector FireDirection)
 					// Spawn a single bullet
 					FRotator rotation = FireDirection.RotateAngleAxis(FMath::RandRange(-CurrentWeapon->FireAccuracy / 2.0f, CurrentWeapon->FireAccuracy / 2.0f), FVector(0.0f, 0.0f, 1.0f)).Rotation();
 					FVector location = GetActorLocation() + rotation.RotateVector(FVector(GunOffset, 0.0f, 0.0f));
-					world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
+					AActor* projectile = world->SpawnActor(CurrentWeapon->Projectile.Get(), &location, &rotation);
+					if (projectile != nullptr)
+					{
+						Cast<ACyberShooterProjectile>(projectile)->SetSource(this);
+					}
 				}
 			}
 
