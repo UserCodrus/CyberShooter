@@ -37,7 +37,7 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement0"));
 	ProjectileMovement->UpdatedComponent = CollisionComponent;
 	ProjectileMovement->InitialSpeed = 3000.0f;
-	ProjectileMovement->MaxSpeed = 3000.0f;
+	ProjectileMovement->MaxSpeed = 6000.0f;
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->ProjectileGravityScale = 0.0f;
 
@@ -71,7 +71,7 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	if (OtherActor != nullptr && OtherActor != this)
 	{
 		// Bounce if possible
-		if (NumBounces > 0)
+		if (NumBounces != 0)
 		{
 			if (BounceOnPawn || Cast<ACyberShooterPawn>(OtherActor) == nullptr)
 			{
