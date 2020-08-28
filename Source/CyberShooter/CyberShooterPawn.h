@@ -10,7 +10,7 @@
 #include "CyberShooterPawn.generated.h"
 
 // A player or enemy character
-UCLASS(Blueprintable)
+UCLASS(BlueprintType, Blueprintable)
 class ACyberShooterPawn : public APawn, public IBreakable
 {
 	GENERATED_BODY()
