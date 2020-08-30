@@ -52,7 +52,7 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	HitOnBounce = true;
 	Damage = 0.0f;
 	DamageType = 0;
-	Force = 20000.0f;
+	Force = 10000.0f;
 
 	Source = nullptr;
 }
@@ -138,7 +138,7 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		// Apply physics
 		if (OtherComp != nullptr && OtherComp->IsSimulatingPhysics())
 		{
-			OtherComp->AddImpulseAtLocation(GetActorRotation().Vector() * Force, GetActorLocation());
+			OtherComp->AddImpulseAtLocation(GetVelocity().GetSafeNormal() * Force, GetActorLocation());
 		}
 	}
 	else
