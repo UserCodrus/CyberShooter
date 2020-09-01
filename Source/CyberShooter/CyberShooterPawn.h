@@ -35,7 +35,7 @@ public:
 	// Deactivate the pawn's weapon
 	void StopFiring();
 	// Fire the pawn's current weapon
-	void FireShot(FVector FireDirection);
+	void FireShot(FVector FireDirection, FVector CenterAxis = FVector(0.0f, 0.0f, 1.0f));
 	// Callback for when the shot timer expires
 	void ShotTimerExpired();
 
