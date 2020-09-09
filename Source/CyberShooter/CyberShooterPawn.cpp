@@ -3,6 +3,7 @@
 #include "CyberShooterPawn.h"
 #include "CyberShooterProjectile.h"
 #include "CyberShooterPlayer.h"
+#include "CyberShooterGameInstance.h"
 
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
@@ -30,6 +31,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	CollisionForce = 40.0f;
 	GunOffset = 90.0f;
 	FireWeapon = false;
+	UseAbility = false;
 
 	MaxHealth = 10;
 	Health = 0;
@@ -52,6 +54,7 @@ void ACyberShooterPawn::BeginPlay()
 	Super::BeginPlay();
 
 	Health = MaxHealth;
+	Momentum = MaxMomentum;
 }
 
 void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin)
@@ -145,6 +148,84 @@ void ACyberShooterPawn::StopFiring()
 	FireWeapon = false;
 }
 
+void ACyberShooterPawn::StartAbility()
+{
+	if (Ability != nullptr)
+	{
+		if (!Ability->Continuous)
+		{
+			// Drain the momentum cost of the ability then use it once
+			if (Momentum >= Ability->Cost)
+			{
+				if (ActivateAbility())
+				{
+					Momentum -= Ability->Cost;
+				}
+			}
+		}
+		else
+		{
+			// Activate the ability
+			if (ActivateAbility())
+			{
+				UseAbility = true;
+			}
+		}
+	}
+}
+
+void ACyberShooterPawn::StopAbility()
+{
+	if (UseAbility)
+	{
+		UseAbility = false;
+		if (Ability != nullptr)
+		{
+			if (Ability->Continuous)
+			{
+				// Deactivate the ability
+				DeactivateAbility();
+			}
+		}
+	}
+}
+
+bool ACyberShooterPawn::ActivateAbility()
+{
+	UCyberShooterGameInstance* instance = Cast<UCyberShooterGameInstance>(GetWorld()->GetGameInstance());
+	if (instance != nullptr)
+	{
+		// Retrieve the ability script then call it
+		UAbilityScript* script = instance->GetScript(Ability->Script);
+		if (script != nullptr)
+		{
+			return script->Activate(this);
+		}
+	}
+	return false;
+}
+
+bool ACyberShooterPawn::DeactivateAbility()
+{
+	UCyberShooterGameInstance* instance = Cast<UCyberShooterGameInstance>(GetWorld()->GetGameInstance());
+	if (instance != nullptr)
+	{
+		// Retrieve the ability script then call it
+		UAbilityScript* script = instance->GetScript(Ability->Script);
+		if (script != nullptr)
+		{
+			return script->Deactivate(this);
+		}
+	}
+	return false;
+}
+
+void ACyberShooterPawn::StopAction()
+{
+	StopFiring();
+	StopAbility();
+}
+
 void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 {
 	if (CanFire == true && Weapon != nullptr)
@@ -184,6 +265,24 @@ void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 
 			CanFire = false;
 			world->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, Weapon->FireRate / 2.0f);
+		}
+	}
+}
+
+void ACyberShooterPawn::SustainAbility(float DeltaTime)
+{
+	if (Ability != nullptr && UseAbility)
+	{
+		// Drain momentum from using an ability
+		if (Ability->Continuous)
+		{
+			Momentum -= Ability->Cost * DeltaTime;
+			if (Momentum <= 0.0f)
+			{
+				// Deactivate the ability when momentum is empty
+				Momentum = 0.0f;
+				StopAbility();
+			}
 		}
 	}
 }

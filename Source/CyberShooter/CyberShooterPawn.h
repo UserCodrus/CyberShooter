@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Weapon.h"
+#include "Ability.h"
 #include "Breakable.h"
 
 #include "CoreMinimal.h"
@@ -30,12 +31,8 @@ public:
 	UFUNCTION()
 		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	// Activate the pawn's weapon
-	void StartFiring();
-	// Deactivate the pawn's weapon
-	void StopFiring();
-	// Fire the pawn's current weapon
-	void FireShot(FVector FireDirection, FVector CenterAxis = FVector(0.0f, 0.0f, 1.0f));
+	// Stop firing and using abilities
+	void StopAction();
 	// Callback for when the shot timer expires
 	void ShotTimerExpired();
 
@@ -50,6 +47,25 @@ public:
 	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
 
 protected:
+	// Activate the pawn's weapon
+	void StartFiring();
+	// Deactivate the pawn's weapon
+	void StopFiring();
+	// Activate the current ability
+	void StartAbility();
+	// Deactivate the current ability
+	void StopAbility();
+
+	// Call the activate script for the current ability
+	bool ActivateAbility();
+	// Call the deactivate script for the current ability
+	bool DeactivateAbility();
+
+	// Fire the pawn's current weapon
+	void FireShot(FVector FireDirection, FVector CenterAxis = FVector(0.0f, 0.0f, 1.0f));
+	// Manage the momentum drain of the pawn's ability
+	void SustainAbility(float DeltaTime);
+
 	/// Attributes ///
 	
 	// The maximum health of the pawn
@@ -97,8 +113,15 @@ protected:
 	UPROPERTY(Category = Weapon, EditAnywhere, BlueprintReadWrite)
 		float GunOffset;
 	// Set to true when the pawn is firing its weapon
-	UPROPERTY(Category = Weapon, VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = Weapon, VisibleAnywhere, BlueprintReadOnly)
 		bool FireWeapon;
+
+	// The currently equipped ability
+	UPROPERTY(Category = Ability, EditAnywhere, BlueprintReadWrite)
+		UAbility* Ability;
+	// Set to true when the pawn is using its ability
+	UPROPERTY(Category = Ability, VisibleAnywhere, BlueprintReadOnly)
+		bool UseAbility;
 
 	// Set to true when the pawn is able to fire its weapon
 	bool CanFire;
