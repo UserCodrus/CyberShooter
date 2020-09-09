@@ -4,6 +4,8 @@
 #include "CyberShooterProjectile.h"
 #include "CyberShooterPlayer.h"
 #include "CyberShooterGameInstance.h"
+#include "Weapon.h"
+#include "Ability.h"
 
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"

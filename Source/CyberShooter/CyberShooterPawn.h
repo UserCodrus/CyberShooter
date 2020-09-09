@@ -2,13 +2,14 @@
 
 #pragma once
 
-#include "Weapon.h"
-#include "Ability.h"
 #include "Breakable.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "CyberShooterPawn.generated.h"
+
+class UWeapon;
+class UAbility;
 
 // A player or enemy character
 UCLASS(BlueprintType, Blueprintable)
