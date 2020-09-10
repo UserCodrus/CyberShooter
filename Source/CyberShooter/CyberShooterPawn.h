@@ -35,7 +35,9 @@ public:
 	// Stop firing and using abilities
 	void StopAction();
 	// Callback for when the shot timer expires
-	void ShotTimerExpired();
+	void EndShotCooldown();
+	// Call back for when the ability timer expires
+	void EndAbilityCooldown();
 
 	/// Accessor Functions ///
 	
@@ -124,9 +126,6 @@ protected:
 	UPROPERTY(Category = Ability, VisibleAnywhere, BlueprintReadOnly)
 		bool UseAbility;
 
-	// Set to true when the pawn is able to fire its weapon
-	bool CanFire;
-
 	/// Movement ///
 
 	// The force mutiplier for physics collisions
@@ -149,8 +148,14 @@ protected:
 	UPROPERTY(Category = Components, EditAnywhere, BlueprintReadOnly)
 		USoundBase* DeathSound;
 
+	// Set to true when the pawn is able to fire its weapon
+	bool CanFire;
+	// Set to true when the pawn is able to use its ability
+	bool CanUseAbility;
 
-	/** Handle for efficient management of ShotTimerExpired timer */
-	FTimerHandle TimerHandle_ShotTimerExpired;
+	// Handle for shot cooldown
+	FTimerHandle TimerHandle_ShotCooldown;
+	// Handle for ability cooldowns
+	FTimerHandle TimerHandle_AbilityCooldown;
 };
 

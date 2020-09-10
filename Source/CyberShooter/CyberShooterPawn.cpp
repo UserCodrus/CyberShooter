@@ -49,6 +49,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	DamageImmunity = 0;
 
 	CanFire = true;
+	CanUseAbility = true;
 }
 
 void ACyberShooterPawn::BeginPlay()
@@ -152,16 +153,19 @@ void ACyberShooterPawn::StopFiring()
 
 void ACyberShooterPawn::StartAbility()
 {
-	if (Ability != nullptr)
+	if (Ability != nullptr && CanUseAbility)
 	{
 		if (!Ability->Continuous)
 		{
-			// Drain the momentum cost of the ability then use it once
+			// Use the ability once
 			if (Momentum >= Ability->Cost)
 			{
 				if (ActivateAbility())
 				{
+					// Drain momentum and set the cooldown timer
+					CanUseAbility = false;
 					Momentum -= Ability->Cost;
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle_AbilityCooldown, this, &ACyberShooterPawn::EndAbilityCooldown, Ability->Cooldown);
 				}
 			}
 		}
@@ -185,8 +189,10 @@ void ACyberShooterPawn::StopAbility()
 		{
 			if (Ability->Continuous)
 			{
-				// Deactivate the ability
+				// Deactivate the ability and start the cooldown
+				CanUseAbility = false;
 				DeactivateAbility();
+				GetWorld()->GetTimerManager().SetTimer(TimerHandle_AbilityCooldown, this, &ACyberShooterPawn::EndAbilityCooldown, Ability->Cooldown);
 			}
 		}
 	}
@@ -230,7 +236,7 @@ void ACyberShooterPawn::StopAction()
 
 void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 {
-	if (CanFire == true && Weapon != nullptr)
+	if (Weapon != nullptr && CanFire)
 	{
 		// If we are aiming in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
@@ -266,7 +272,7 @@ void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 			}
 
 			CanFire = false;
-			world->GetTimerManager().SetTimer(TimerHandle_ShotTimerExpired, this, &ACyberShooterPawn::ShotTimerExpired, Weapon->FireRate / 2.0f);
+			world->GetTimerManager().SetTimer(TimerHandle_ShotCooldown, this, &ACyberShooterPawn::EndShotCooldown, Weapon->FireRate / 2.0f);
 		}
 	}
 }
@@ -289,9 +295,14 @@ void ACyberShooterPawn::SustainAbility(float DeltaTime)
 	}
 }
 
-void ACyberShooterPawn::ShotTimerExpired()
+void ACyberShooterPawn::EndShotCooldown()
 {
 	CanFire = true;
+}
+
+void ACyberShooterPawn::EndAbilityCooldown()
+{
+	CanUseAbility = true;
 }
 
 void ACyberShooterPawn::ChangeMomentum(float Value)
