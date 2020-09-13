@@ -47,6 +47,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MinimumDamageAngle = -190.0f;
 	MaximumDamageAngle = 190.0f;
 	DamageImmunity = 0;
+	EnvironmentDamage = 0.0f;
 
 	CanFire = true;
 	CanUseAbility = true;
@@ -317,4 +318,9 @@ void ACyberShooterPawn::ChangeMomentum(float Value)
 	{
 		Momentum = 0.0f;
 	}
+}
+
+void ACyberShooterPawn::SetEnvironmentDamage(float Damage)
+{
+	EnvironmentDamage = Damage;
 }

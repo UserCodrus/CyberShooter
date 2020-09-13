@@ -39,9 +39,16 @@ public:
 	// Call back for when the ability timer expires
 	void EndAbilityCooldown();
 
+	
+
 	/// Accessor Functions ///
 	
-	void ChangeMomentum(float Value);
+	// Add or remove momentum from the pawn
+	UFUNCTION(BlueprintCallable)
+		void ChangeMomentum(float Value);
+	// Add environmental damage to the pawn
+	UFUNCTION(BlueprintCallable)
+		void SetEnvironmentDamage(float Damage);
 
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 	FORCEINLINE int32 GetHealth() const { return Health; }
@@ -106,6 +113,10 @@ protected:
 	// The maximum damage angle
 	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
 		float MaximumDamageAngle;
+
+	// Damage the pawn is currently taking from its environment
+	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+		float EnvironmentDamage;
 
 	/// Weapons ///
 
