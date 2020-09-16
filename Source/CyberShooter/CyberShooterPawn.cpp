@@ -50,8 +50,8 @@ ACyberShooterPawn::ACyberShooterPawn()
 	DamageImmunity = 0;
 	EnvironmentDamage = 0.0f;
 
-	CanUseAbility = true;
 	ShotCooldown = 0.0f;
+	AbilityCooldown = 0.0f;
 }
 
 void ACyberShooterPawn::BeginPlay()
@@ -155,7 +155,7 @@ void ACyberShooterPawn::StopFiring()
 
 void ACyberShooterPawn::StartAbility()
 {
-	if (Ability != nullptr && CanUseAbility)
+	if (Ability != nullptr && AbilityCooldown <= 0.0f)
 	{
 		if (!Ability->Continuous)
 		{
@@ -165,9 +165,8 @@ void ACyberShooterPawn::StartAbility()
 				if (ActivateAbility())
 				{
 					// Drain momentum and set the cooldown timer
-					CanUseAbility = false;
 					Momentum -= Ability->Cost;
-					GetWorld()->GetTimerManager().SetTimer(TimerHandle_AbilityCooldown, this, &ACyberShooterPawn::EndAbilityCooldown, Ability->Cooldown);
+					AbilityCooldown = Ability->Cooldown;
 				}
 			}
 		}
@@ -192,9 +191,8 @@ void ACyberShooterPawn::StopAbility()
 			if (Ability->Continuous)
 			{
 				// Deactivate the ability and start the cooldown
-				CanUseAbility = false;
 				DeactivateAbility();
-				GetWorld()->GetTimerManager().SetTimer(TimerHandle_AbilityCooldown, this, &ACyberShooterPawn::EndAbilityCooldown, Ability->Cooldown);
+				AbilityCooldown = Ability->Cooldown;
 			}
 		}
 	}
@@ -238,7 +236,7 @@ void ACyberShooterPawn::StopAction()
 
 void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 {
-	if (Weapon != nullptr)
+	if (Weapon != nullptr && ShotCooldown <= 0.0f)
 	{
 		// If we are aiming in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
@@ -295,11 +293,6 @@ void ACyberShooterPawn::SustainAbility(float DeltaTime)
 			}
 		}
 	}
-}
-
-void ACyberShooterPawn::EndAbilityCooldown()
-{
-	CanUseAbility = true;
 }
 
 void ACyberShooterPawn::ChangeMomentum(float Value)

@@ -34,8 +34,6 @@ public:
 
 	// Stop firing and using abilities
 	void StopAction();
-	// Call back for when the ability timer expires
-	void EndAbilityCooldown();
 
 	/// Accessor Functions ///
 	
@@ -163,11 +161,7 @@ protected:
 	UPROPERTY(Category = "Components", EditAnywhere, BlueprintReadOnly)
 		USoundBase* DeathSound;
 
-	// Set to true when the pawn is able to use its ability
-	bool CanUseAbility;
-	// Handle for ability cooldowns
-	FTimerHandle TimerHandle_AbilityCooldown;
-
 	float ShotCooldown;
+	float AbilityCooldown;
 };
 
