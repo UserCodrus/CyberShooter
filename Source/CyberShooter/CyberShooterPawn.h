@@ -34,27 +34,27 @@ public:
 
 	// Stop firing and using abilities
 	void StopAction();
-	// Callback for when the shot timer expires
-	void EndShotCooldown();
 	// Call back for when the ability timer expires
 	void EndAbilityCooldown();
-
-	
 
 	/// Accessor Functions ///
 	
 	// Add or remove momentum from the pawn
 	UFUNCTION(BlueprintCallable)
 		void ChangeMomentum(float Value);
-	// Add environmental damage to the pawn
+	// Add environmental damage over time to the pawn
 	UFUNCTION(BlueprintCallable)
 		void SetEnvironmentDamage(float Damage);
+	// Change the tick speed of the pawn
+	UFUNCTION(BlueprintCallable)
+		virtual void SetTickSpeed(float NewSpeed);
 
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 	FORCEINLINE int32 GetHealth() const { return Health; }
 	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
 	FORCEINLINE float GetMomentum() const { return Momentum; }
 	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
+	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
 
 protected:
 	// Activate the pawn's weapon
@@ -79,94 +79,95 @@ protected:
 	/// Attributes ///
 	
 	// The maximum health of the pawn
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
 		int32 MaxHealth;
 	// The pawn's current health
-	UPROPERTY(Category = Attributes, EditInstanceOnly, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
 		int32 Health;
 	// The maximum momentum for the pawn
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
 		float MaxMomentum;
 	// The pawn's current momentum
-	UPROPERTY(Category = Attributes, EditInstanceOnly, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
 		float Momentum;
 	// The speed muliplier at max momentum
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
 		float MomentumBonus;
 
 	// The momentum reward for killing this pawn
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
 		float MomentumReward;
 	// The momentum lost upon taking damage
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
 		float MomentumPenalty;
 
 	// Flags for which types of damage can affect the pawn
-	UPROPERTY(Category = Attributes, EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageType))
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageType))
 		int32 DamageImmunity;
 	// The direction from which the pawn can be damaged
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
 		FVector DamageDirection;
 	// The minimum damage angle
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
 		float MinimumDamageAngle;
 	// The maximum damage angle
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
 		float MaximumDamageAngle;
 
 	// Damage the pawn is currently taking from its environment
-	UPROPERTY(Category = Attributes, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
 		float EnvironmentDamage;
 
 	/// Weapons ///
 
 	// The currently equipped weapon
-	UPROPERTY(Category = Weapon, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
 		UWeapon* Weapon;
 	// The offset for spawning projectiles
-	UPROPERTY(Category = Weapon, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Weapon", EditAnywhere, BlueprintReadWrite)
 		float GunOffset;
 	// Set to true when the pawn is firing its weapon
-	UPROPERTY(Category = Weapon, VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = "Weapon", VisibleAnywhere, BlueprintReadOnly)
 		bool FireWeapon;
 
 	// The currently equipped ability
-	UPROPERTY(Category = Ability, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Ability", EditAnywhere, BlueprintReadWrite)
 		UAbility* Ability;
 	// Set to true when the pawn is using its ability
-	UPROPERTY(Category = Ability, VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = "Ability", VisibleAnywhere, BlueprintReadOnly)
 		bool UseAbility;
 
 	/// Movement ///
 
 	// The force mutiplier for physics collisions
-	UPROPERTY(Category = Movement, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
 		float CollisionForce;
+
+	// The tick speed of the pawn
+	UPROPERTY(Category = "Time", EditAnywhere, BlueprintReadWrite)
+		float TickSpeed;
 
 	/// Components ///
 
 	// The collision capsule
-	UPROPERTY(Category = Components, VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
 		class UCapsuleComponent* CollisionComponent;
 	// The character's static mesh
-	UPROPERTY(Category = Components, VisibleDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
 		class UStaticMeshComponent* MeshComponent;
 
 	// Particles that spawn on death
-	UPROPERTY(Category = Components, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = "Components", EditAnywhere, BlueprintReadOnly)
 		UParticleSystem* DeathParticles;
 	// the sound that plays on death
-	UPROPERTY(Category = Components, EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = "Components", EditAnywhere, BlueprintReadOnly)
 		USoundBase* DeathSound;
 
-	// Set to true when the pawn is able to fire its weapon
-	bool CanFire;
 	// Set to true when the pawn is able to use its ability
 	bool CanUseAbility;
-
-	// Handle for shot cooldown
-	FTimerHandle TimerHandle_ShotCooldown;
 	// Handle for ability cooldowns
 	FTimerHandle TimerHandle_AbilityCooldown;
+
+	float ShotCooldown;
 };
 

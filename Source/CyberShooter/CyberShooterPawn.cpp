@@ -42,6 +42,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MomentumBonus = 0.0f;
 	MomentumReward = 30.0f;
 	MomentumPenalty = 0.0f;
+	TickSpeed = 1.0f;
 
 	DamageDirection = FVector(1.0f, 0.0f, 0.0f);
 	MinimumDamageAngle = -190.0f;
@@ -49,8 +50,8 @@ ACyberShooterPawn::ACyberShooterPawn()
 	DamageImmunity = 0;
 	EnvironmentDamage = 0.0f;
 
-	CanFire = true;
 	CanUseAbility = true;
+	ShotCooldown = 0.0f;
 }
 
 void ACyberShooterPawn::BeginPlay()
@@ -237,7 +238,7 @@ void ACyberShooterPawn::StopAction()
 
 void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 {
-	if (Weapon != nullptr && CanFire)
+	if (Weapon != nullptr)
 	{
 		// If we are aiming in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
@@ -272,8 +273,8 @@ void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 				}
 			}
 
-			CanFire = false;
-			world->GetTimerManager().SetTimer(TimerHandle_ShotCooldown, this, &ACyberShooterPawn::EndShotCooldown, Weapon->FireRate / 2.0f);
+			// Set the shot cooldown
+			ShotCooldown = Weapon->FireRate;
 		}
 	}
 }
@@ -294,11 +295,6 @@ void ACyberShooterPawn::SustainAbility(float DeltaTime)
 			}
 		}
 	}
-}
-
-void ACyberShooterPawn::EndShotCooldown()
-{
-	CanFire = true;
 }
 
 void ACyberShooterPawn::EndAbilityCooldown()
@@ -323,4 +319,12 @@ void ACyberShooterPawn::ChangeMomentum(float Value)
 void ACyberShooterPawn::SetEnvironmentDamage(float Damage)
 {
 	EnvironmentDamage = Damage;
+}
+
+void ACyberShooterPawn::SetTickSpeed(float NewSpeed)
+{
+	if (NewSpeed > 0.0f)
+	{
+		TickSpeed = NewSpeed;
+	}
 }
