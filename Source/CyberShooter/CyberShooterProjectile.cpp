@@ -2,12 +2,13 @@
 
 #include "CyberShooterProjectile.h"
 #include "CyberShooterPawn.h"
+#include "CyberShooterGameInstance.h"
+#include "BulletMovementComponent.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Engine/CollisionProfile.h"
@@ -34,16 +35,8 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	ParticleSystem->SetupAttachment(RootComponent);
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
-	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement0"));
+	ProjectileMovement = CreateDefaultSubobject<UBulletMovementComponent>(TEXT("ProjectileMovement0"));
 	ProjectileMovement->UpdatedComponent = CollisionComponent;
-	ProjectileMovement->InitialSpeed = 3000.0f;
-	ProjectileMovement->MaxSpeed = 6000.0f;
-	ProjectileMovement->bRotationFollowsVelocity = true;
-	ProjectileMovement->ProjectileGravityScale = 0.0f;
-
-	ProjectileMovement->bShouldBounce = true;
-	ProjectileMovement->Bounciness = 1.0f;
-	ProjectileMovement->Friction = 0.0f;
 
 	InitialLifeSpan = 3.0f;
 	NumBounces = 0;
@@ -62,6 +55,7 @@ void ACyberShooterProjectile::SetSource(AActor* ProjectileSource)
 	if (Source == nullptr)
 	{
 		Source = ProjectileSource;
+		ProjectileMovement->AddVelocity(ProjectileSource->GetVelocity());
 	}
 }
 
@@ -122,6 +116,40 @@ void ACyberShooterProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 		// Destroy the projectile
 		Destroy();
 	}
+}
+
+void ACyberShooterProjectile::SetAirFriction(float NewFriction)
+{
+	ProjectileMovement->SetAirFriction(NewFriction);
+}
+
+void ACyberShooterProjectile::ResetAirFriction()
+{
+	UCyberShooterGameInstance* instance = Cast<UCyberShooterGameInstance>(GetWorld()->GetGameInstance());
+	if (instance != nullptr)
+	{
+		ProjectileMovement->SetAirFriction(instance->GetAirFriction());
+	}
+}
+
+void ACyberShooterProjectile::SetTickSpeed(float NewSpeed)
+{
+	ProjectileMovement->SetTickSpeed(NewSpeed);
+}
+
+void ACyberShooterProjectile::ResetTickSpeed()
+{
+	ProjectileMovement->SetTickSpeed(1.0f);
+}
+
+void ACyberShooterProjectile::SetStaticForce(FVector NewForce)
+{
+	ProjectileMovement->SetStaticForce(NewForce);
+}
+
+void ACyberShooterProjectile::ResetStaticForce()
+{
+	ProjectileMovement->SetStaticForce(FVector(0.0f));
 }
 
 void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponent* OtherComp)
