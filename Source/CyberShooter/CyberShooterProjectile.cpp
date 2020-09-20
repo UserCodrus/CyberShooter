@@ -44,7 +44,7 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	ExplosionRadius = 0.0f;
 	HitOnBounce = true;
 	Damage = 0.0f;
-	DamageType = 0;
+	DamageType = DAMAGETYPE_NONE;
 	Force = 10000.0f;
 
 	Source = nullptr;

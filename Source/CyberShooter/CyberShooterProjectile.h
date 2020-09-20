@@ -91,7 +91,7 @@ protected:
 	UPROPERTY(Category = "Projectile|Damage", EditDefaultsOnly, BlueprintReadOnly)
 		int32 Damage;
 	// The damage type of the projectile
-	UPROPERTY(Category = "Projectile|Damage", EditDefaultsOnly, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = EDamageType))
+	UPROPERTY(Category = "Projectile|Damage", EditDefaultsOnly, BlueprintReadOnly, meta = (Bitmask, BitmaskEnum = EDamageTypeFlag))
 		int32 DamageType;
 	// The radius of projectile explosions
 	UPROPERTY(Category = "Projectile|Damage", EditDefaultsOnly, BlueprintReadOnly)

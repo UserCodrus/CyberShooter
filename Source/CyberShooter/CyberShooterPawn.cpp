@@ -21,7 +21,6 @@ ACyberShooterPawn::ACyberShooterPawn()
 	// Create the collision component
 	CollisionComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("PlayerCollisionComponent"));
 	CollisionComponent->SetCollisionProfileName(UCollisionProfile::Pawn_ProfileName);
-	CollisionComponent->OnComponentHit.AddDynamic(this, &ACyberShooterPawn::OnHit);
 	RootComponent = CollisionComponent;
 
 	// Create the mesh component
@@ -47,7 +46,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	DamageDirection = FVector(1.0f, 0.0f, 0.0f);
 	MinimumDamageAngle = -190.0f;
 	MaximumDamageAngle = 190.0f;
-	DamageImmunity = 0;
+	DamageImmunity = DAMAGETYPE_NONE;
 	EnvironmentDamage = 0.0f;
 
 	ShotCooldown = 0.0f;
@@ -132,15 +131,6 @@ void ACyberShooterPawn::Kill()
 	}
 
 	Destroy();
-}
-
-void ACyberShooterPawn::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	// Add an impulse when a physics object is hit
-	if ((OtherActor != nullptr) && (OtherActor != this) && (OtherComp != nullptr) && OtherComp->IsSimulatingPhysics())
-	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * CollisionForce, GetActorLocation());
-	}
 }
 
 void ACyberShooterPawn::StartFiring()

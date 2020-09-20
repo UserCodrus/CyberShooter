@@ -28,10 +28,6 @@ public:
 	virtual void Heal(int32 Value);
 	virtual void Kill();
 
-	// The function that handles the ship hitting obstacles
-	UFUNCTION()
-		virtual void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 	// Stop firing and using abilities
 	void StopAction();
 
@@ -100,7 +96,7 @@ protected:
 		float MomentumPenalty;
 
 	// Flags for which types of damage can affect the pawn
-	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageType))
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageTypeFlag))
 		int32 DamageImmunity;
 	// The direction from which the pawn can be damaged
 	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
@@ -138,7 +134,7 @@ protected:
 	/// Movement ///
 
 	// The force mutiplier for physics collisions
-	UPROPERTY(Category = "Movement", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Physics", EditAnywhere, BlueprintReadWrite)
 		float CollisionForce;
 
 	// The tick speed of the pawn
