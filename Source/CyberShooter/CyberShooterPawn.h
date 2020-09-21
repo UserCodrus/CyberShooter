@@ -43,6 +43,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 		virtual void SetTickSpeed(float NewSpeed);
 
+	// Activate the pawn's weapon
+	void StartFiring();
+	// Deactivate the pawn's weapon
+	void StopFiring();
+
 	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 	FORCEINLINE int32 GetHealth() const { return Health; }
 	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
@@ -51,10 +56,6 @@ public:
 	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
 
 protected:
-	// Activate the pawn's weapon
-	void StartFiring();
-	// Deactivate the pawn's weapon
-	void StopFiring();
 	// Activate the current ability
 	void StartAbility();
 	// Deactivate the current ability

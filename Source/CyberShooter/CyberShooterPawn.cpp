@@ -84,7 +84,7 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 			Health -= Value;
 			ChangeMomentum(MomentumPenalty);
 
-			if (Health <= 0.0f)
+			if (Health <= 0)
 			{
 				// Notify the player of kills
 				ACyberShooterPlayer* player = Cast<ACyberShooterPlayer>(Origin);
