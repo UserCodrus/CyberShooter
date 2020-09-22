@@ -100,6 +100,11 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 	}
 }
 
+void ACyberShooterPawn::Impulse(FVector Force)
+{
+	// Dummy function, overriden by children
+}
+
 void ACyberShooterPawn::Heal(int32 Value)
 {
 	if (Value > 0)

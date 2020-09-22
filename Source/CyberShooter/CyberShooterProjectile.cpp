@@ -46,6 +46,7 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	Damage = 0.0f;
 	DamageType = DAMAGETYPE_NONE;
 	Force = 10000.0f;
+	Impulse = 500.0f;
 
 	Source = nullptr;
 }
@@ -161,6 +162,7 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		if (target != nullptr)
 		{
 			target->Damage(Damage, DamageType, this, Source);
+			target->Impulse(GetVelocity().GetSafeNormal() * Impulse);
 		}
 
 		// Apply physics
@@ -180,19 +182,21 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		// Affect every actor in range of the explosion
 		for (int32 i = 0; i < actors.Num(); ++i)
 		{
+			FVector direction = (actors[i]->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+
 			// Damage breakables
 			IBreakable* target = Cast<IBreakable>(actors[i]);
 			if (target != nullptr)
 			{
 				target->Damage(Damage, DamageType, this, Source);
+				target->Impulse(direction * Impulse);
 			}
 
 			// Apply physics
 			UPrimitiveComponent* component = Cast<UPrimitiveComponent>(actors[i]->GetRootComponent());
 			if (component != nullptr && component->IsSimulatingPhysics())
 			{
-				FVector direction = actors[i]->GetActorLocation() - GetActorLocation();
-				component->AddImpulseAtLocation(direction.GetSafeNormal() * Force, GetActorLocation());
+				component->AddImpulseAtLocation(direction * Force, GetActorLocation());
 			}
 		}
 	}

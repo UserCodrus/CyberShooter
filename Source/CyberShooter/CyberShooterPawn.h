@@ -25,6 +25,7 @@ public:
 	/// Breakable Interface ///
 	
 	virtual void Damage(int32 Value, int32 DamageType, AActor* Source = nullptr, AActor* Origin = nullptr);
+	virtual void Impulse(FVector Force);
 	virtual void Heal(int32 Value);
 	virtual void Kill();
 
