@@ -68,7 +68,7 @@ protected:
 	bool DeactivateAbility();
 
 	// Fire the pawn's current weapon
-	void FireShot(FVector FireDirection, FVector CenterAxis = FVector(0.0f, 0.0f, 1.0f));
+	void Fire(FVector FireDirection);
 	// Manage the momentum drain of the pawn's ability
 	void SustainAbility(float DeltaTime);
 
@@ -135,8 +135,15 @@ protected:
 
 	/// Movement ///
 
+	// The forward vector for the player
+	UPROPERTY(Category = "Movement|Orientation", EditAnywhere, BlueprintReadWrite)
+		FVector Forward;
+	// The up vector for the player
+	UPROPERTY(Category = "Movement|Orientation", EditAnywhere, BlueprintReadWrite)
+		FVector Up;
+
 	// The force mutiplier for physics collisions
-	UPROPERTY(Category = "Attributes|Physics", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Movement|Physics", EditAnywhere, BlueprintReadWrite)
 		float CollisionForce;
 
 	// The tick speed of the pawn

@@ -29,6 +29,8 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MeshComponent->SetupAttachment(RootComponent);
 
 	// Set defaults
+	Forward = FVector(1.0f, 0.0f, 0.0f);
+	Up = FVector(0.0f, 0.0f, 1.0f);
 	CollisionForce = 40.0f;
 	GunOffset = 90.0f;
 	FireWeapon = false;
@@ -59,6 +61,9 @@ void ACyberShooterPawn::BeginPlay()
 
 	Health = MaxHealth;
 	Momentum = MaxMomentum;
+
+	Forward = GetActorForwardVector();
+	Up = GetActorUpVector();
 }
 
 void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin)
@@ -229,7 +234,7 @@ void ACyberShooterPawn::StopAction()
 	StopAbility();
 }
 
-void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
+void ACyberShooterPawn::Fire(FVector FireDirection)
 {
 	if (Weapon != nullptr && ShotCooldown <= 0.0f)
 	{
@@ -245,13 +250,13 @@ void ACyberShooterPawn::FireShot(FVector FireDirection, FVector CenterAxis)
 				{
 					// Add a random variation to the shot angle based on weapon accuracy
 					float random_angle = FMath::RandRange(-Weapon->FireAccuracy / 2.0f, Weapon->FireAccuracy / 2.0f);
-					FRotator rotation = FireDirection.RotateAngleAxis(random_angle + angle, CenterAxis).Rotation();
+					FRotator rotation = FireDirection.RotateAngleAxis(random_angle + angle, Up).Rotation();
 
 					// Spawn a projectile
 					FVector location = GetActorLocation() + rotation.RotateVector(FVector(GunOffset, 0.0f, 0.0f));
 					if (!Weapon->FanBullets)
 					{
-						rotation = FireDirection.RotateAngleAxis(random_angle, CenterAxis).Rotation();
+						rotation = FireDirection.RotateAngleAxis(random_angle, Up).Rotation();
 					}
 
 					//rotation = Orientation.RotateVector(rotation.Vector()).Rotation();
