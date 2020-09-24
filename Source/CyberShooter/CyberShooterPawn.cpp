@@ -13,6 +13,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Engine/CollisionProfile.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 #include "Engine/Engine.h"
 
@@ -293,6 +294,11 @@ void ACyberShooterPawn::SustainAbility(float DeltaTime)
 			}
 		}
 	}
+}
+
+FRotator ACyberShooterPawn::GetOrientationRotator()
+{
+	return UKismetMathLibrary::MakeRotationFromAxes(Forward, FVector::CrossProduct(Up, Forward), Up);
 }
 
 void ACyberShooterPawn::ChangeMomentum(float Value)

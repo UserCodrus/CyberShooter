@@ -33,7 +33,19 @@ public:
 	void StopAction();
 
 	/// Accessor Functions ///
-	
+
+	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
+	FORCEINLINE int32 GetHealth() const { return Health; }
+	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
+	FORCEINLINE float GetMomentum() const { return Momentum; }
+	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
+	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
+	FORCEINLINE FVector GetForwardVector() const { return Forward; }
+	FORCEINLINE FVector GetUpVector() const { return Up; }
+
+	// Get the rotator corresponding to the pawn's orientation
+	UFUNCTION(BlueprintCallable)
+		FRotator GetOrientationRotator();
 	// Add or remove momentum from the pawn
 	UFUNCTION(BlueprintCallable)
 		void ChangeMomentum(float Value);
@@ -48,13 +60,6 @@ public:
 	void StartFiring();
 	// Deactivate the pawn's weapon
 	void StopFiring();
-
-	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
-	FORCEINLINE int32 GetHealth() const { return Health; }
-	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
-	FORCEINLINE float GetMomentum() const { return Momentum; }
-	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
-	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
 
 protected:
 	// Activate the current ability
