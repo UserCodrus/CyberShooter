@@ -46,10 +46,21 @@ public:
 	FVector GetUpVector() const;
 	// Get the rotator corresponding to the pawn's orientation
 	FRotator GetOrientationRotator() const;
-	// Get the rotation of the pawn's core component in local space
-	FRotator GetLocalRotation() const;
+	// Get the forward vector of the pawn's core component
+	FVector GetCoreForwardVector() const;
+	// Get the up vector of the pawn's core component
+	FVector GetCoreUpVector() const;
 	// Get the rotation of the pawn's core component in world space
-	FRotator GetWorldRotation() const;
+	FRotator GetCoreRotation() const;
+	// Get the rotation of the pawn's core component in local space
+	FRotator GetCoreLocalRotation() const;
+
+	// Set the rotation of the core component in local space
+	void SetCoreRotation(FRotator Rotation);
+	void SetCoreRotation(FQuat Rotation);
+	// Set the rotation of the core component in world space
+	void SetCoreWorldRotation(FRotator Rotation);
+	void SetCoreWorldRotation(FQuat Rotation);
 
 	// Add or remove momentum from the pawn
 	UFUNCTION(BlueprintCallable)

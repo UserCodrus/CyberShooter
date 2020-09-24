@@ -304,14 +304,44 @@ FRotator ACyberShooterPawn::GetOrientationRotator() const
 	return RootComponent->GetComponentRotation();
 }
 
-FRotator ACyberShooterPawn::GetLocalRotation() const
+FVector ACyberShooterPawn::GetCoreForwardVector() const
+{
+	return CoreComponent->GetForwardVector();
+}
+
+FVector ACyberShooterPawn::GetCoreUpVector() const
+{
+	return CoreComponent->GetUpVector();
+}
+
+FRotator ACyberShooterPawn::GetCoreRotation() const
+{
+	return CoreComponent->GetComponentRotation();
+}
+
+FRotator ACyberShooterPawn::GetCoreLocalRotation() const
 {
 	return CoreComponent->GetRelativeRotation();
 }
 
-FRotator ACyberShooterPawn::GetWorldRotation() const
+void ACyberShooterPawn::SetCoreRotation(FRotator Rotation)
 {
-	return CoreComponent->GetComponentRotation();
+	CoreComponent->SetRelativeRotation(Rotation);
+}
+
+void ACyberShooterPawn::SetCoreRotation(FQuat Rotation)
+{
+	CoreComponent->SetRelativeRotation(Rotation);
+}
+
+void ACyberShooterPawn::SetCoreWorldRotation(FRotator Rotation)
+{
+	CoreComponent->SetWorldRotation(Rotation);
+}
+
+void ACyberShooterPawn::SetCoreWorldRotation(FQuat Rotation)
+{
+	CoreComponent->SetWorldRotation(Rotation);
 }
 
 void ACyberShooterPawn::ChangeMomentum(float Value)
