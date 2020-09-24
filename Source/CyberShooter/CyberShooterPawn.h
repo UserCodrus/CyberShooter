@@ -34,7 +34,6 @@ public:
 
 	/// Accessor Functions ///
 
-	//FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 	FORCEINLINE int32 GetHealth() const { return Health; }
 	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
 	FORCEINLINE float GetMomentum() const { return Momentum; }
@@ -162,9 +161,6 @@ protected:
 	// The collision capsule
 	UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
 		class UCapsuleComponent* CollisionComponent;
-	// The character's static mesh
-	//UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
-		//class UStaticMeshComponent* MeshComponent;
 
 	// Particles that spawn on death
 	UPROPERTY(Category = "Components", EditAnywhere, BlueprintReadOnly)
