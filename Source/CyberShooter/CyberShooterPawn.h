@@ -34,18 +34,24 @@ public:
 
 	/// Accessor Functions ///
 
-	FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
+	//FORCEINLINE class UStaticMeshComponent* GetMesh() const { return MeshComponent; }
 	FORCEINLINE int32 GetHealth() const { return Health; }
 	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
 	FORCEINLINE float GetMomentum() const { return Momentum; }
 	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
 	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
-	FORCEINLINE FVector GetForwardVector() const { return Forward; }
-	FORCEINLINE FVector GetUpVector() const { return Up; }
 
+	// Get the forward vector of the pawn's current orientation
+	FVector GetForwardVector() const;
+	// Get the up vector of the pawn's current orientation
+	FVector GetUpVector() const;
 	// Get the rotator corresponding to the pawn's orientation
-	UFUNCTION(BlueprintCallable)
-		FRotator GetOrientationRotator();
+	FRotator GetOrientationRotator() const;
+	// Get the rotation of the pawn's core component in local space
+	FRotator GetLocalRotation() const;
+	// Get the rotation of the pawn's core component in world space
+	FRotator GetWorldRotation() const;
+
 	// Add or remove momentum from the pawn
 	UFUNCTION(BlueprintCallable)
 		void ChangeMomentum(float Value);
@@ -140,13 +146,6 @@ protected:
 
 	/// Movement ///
 
-	// The forward vector for the player
-	UPROPERTY(Category = "Movement|Orientation", EditAnywhere, BlueprintReadWrite)
-		FVector Forward;
-	// The up vector for the player
-	UPROPERTY(Category = "Movement|Orientation", EditAnywhere, BlueprintReadWrite)
-		FVector Up;
-
 	// The force mutiplier for physics collisions
 	UPROPERTY(Category = "Movement|Physics", EditAnywhere, BlueprintReadWrite)
 		float CollisionForce;
@@ -157,12 +156,15 @@ protected:
 
 	/// Components ///
 
+	// The core component that stores local transformations for the pawn
+	UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
+		USceneComponent* CoreComponent;
 	// The collision capsule
 	UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
 		class UCapsuleComponent* CollisionComponent;
 	// The character's static mesh
-	UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
-		class UStaticMeshComponent* MeshComponent;
+	//UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
+		//class UStaticMeshComponent* MeshComponent;
 
 	// Particles that spawn on death
 	UPROPERTY(Category = "Components", EditAnywhere, BlueprintReadOnly)
