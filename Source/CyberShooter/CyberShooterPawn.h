@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Breakable.h"
+#include "CombatInterface.h"
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
@@ -13,7 +13,7 @@ class UAbility;
 
 // A player or enemy character
 UCLASS(BlueprintType, Blueprintable)
-class ACyberShooterPawn : public APawn, public IBreakable
+class ACyberShooterPawn : public APawn, public ICombatInterface
 {
 	GENERATED_BODY()
 
@@ -22,15 +22,11 @@ public:
 
 	virtual void BeginPlay() override;
 
-	/// Breakable Interface ///
+	/// ICombatInterface ///
 	
-	virtual void Damage(int32 Value, int32 DamageType, AActor* Source = nullptr, AActor* Origin = nullptr);
-	virtual void Impulse(FVector Force);
-	virtual void Heal(int32 Value);
-	virtual void Kill();
-
-	// Stop firing and using abilities
-	void StopAction();
+	virtual void Damage(int32 Value, int32 DamageType, AActor* Source = nullptr, AActor* Origin = nullptr) override;
+	virtual void Heal(int32 Value) override;
+	virtual void Kill() override;
 
 	/// Accessor Functions ///
 
@@ -39,6 +35,9 @@ public:
 	FORCEINLINE float GetMomentum() const { return Momentum; }
 	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
 	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
+
+	// Stop firing and using abilities
+	void StopAction();
 
 	// Get the forward vector of the pawn's current orientation
 	FVector GetForwardVector() const;

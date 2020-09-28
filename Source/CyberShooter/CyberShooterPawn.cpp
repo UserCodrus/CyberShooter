@@ -59,6 +59,8 @@ void ACyberShooterPawn::BeginPlay()
 	Momentum = MaxMomentum;
 }
 
+/// ICombatInterface ///
+
 void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin)
 {
 	if (!(DamageImmunity & DamageType))
@@ -96,11 +98,6 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 			}
 		}
 	}
-}
-
-void ACyberShooterPawn::Impulse(FVector Force)
-{
-	// Dummy function, overriden by children
 }
 
 void ACyberShooterPawn::Heal(int32 Value)

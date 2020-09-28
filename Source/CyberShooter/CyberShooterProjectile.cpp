@@ -4,7 +4,8 @@
 #include "CyberShooterPawn.h"
 #include "CyberShooterGameInstance.h"
 #include "BulletMovementComponent.h"
-#include "PhysicsInteraction.h"
+#include "PhysicsInterface.h"
+#include "CombatInterface.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "UObject/ConstructorHelpers.h"
@@ -159,14 +160,14 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 	if (ExplosionRadius <= 0.0f)
 	{
 		// Apply damage
-		IBreakable* target = Cast<IBreakable>(OtherActor);
+		ICombatInterface* target = Cast<ICombatInterface>(OtherActor);
 		if (target != nullptr)
 		{
 			target->Damage(Damage, DamageType, this, Source);
 		}
 
 		// Apply physics
-		IPhysicsInteraction* object = Cast<IPhysicsInteraction>(OtherActor);
+		IPhysicsInterface* object = Cast<IPhysicsInterface>(OtherActor);
 		if (object != nullptr)
 		{
 			object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
@@ -190,14 +191,14 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 			FVector direction = (actors[i]->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 
 			// Apply damage
-			IBreakable* target = Cast<IBreakable>(actors[i]);
+			ICombatInterface* target = Cast<ICombatInterface>(actors[i]);
 			if (target != nullptr)
 			{
 				target->Damage(Damage, DamageType, this, Source);
 			}
 
 			// Apply physics
-			IPhysicsInteraction* object = Cast<IPhysicsInteraction>(actors[i]);
+			IPhysicsInterface* object = Cast<IPhysicsInterface>(actors[i]);
 			if (object != nullptr)
 			{
 				object->AddImpulse(direction * Impulse);
