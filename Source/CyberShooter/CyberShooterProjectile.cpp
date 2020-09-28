@@ -4,6 +4,7 @@
 #include "CyberShooterPawn.h"
 #include "CyberShooterGameInstance.h"
 #include "BulletMovementComponent.h"
+#include "PhysicsInteraction.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "UObject/ConstructorHelpers.h"
@@ -157,15 +158,19 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 {
 	if (ExplosionRadius <= 0.0f)
 	{
-		// Deal damage to breakables
+		// Apply damage
 		IBreakable* target = Cast<IBreakable>(OtherActor);
 		if (target != nullptr)
 		{
 			target->Damage(Damage, DamageType, this, Source);
-			target->Impulse(GetVelocity().GetSafeNormal() * Impulse);
 		}
 
 		// Apply physics
+		IPhysicsInteraction* object = Cast<IPhysicsInteraction>(OtherActor);
+		if (object != nullptr)
+		{
+			object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
+		}
 		if (OtherComp != nullptr && OtherComp->IsSimulatingPhysics())
 		{
 			OtherComp->AddImpulseAtLocation(GetVelocity().GetSafeNormal() * Force, GetActorLocation());
@@ -184,15 +189,19 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		{
 			FVector direction = (actors[i]->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 
-			// Damage breakables
+			// Apply damage
 			IBreakable* target = Cast<IBreakable>(actors[i]);
 			if (target != nullptr)
 			{
 				target->Damage(Damage, DamageType, this, Source);
-				target->Impulse(direction * Impulse);
 			}
 
 			// Apply physics
+			IPhysicsInteraction* object = Cast<IPhysicsInteraction>(actors[i]);
+			if (object != nullptr)
+			{
+				object->AddImpulse(direction * Impulse);
+			}
 			UPrimitiveComponent* component = Cast<UPrimitiveComponent>(actors[i]->GetRootComponent());
 			if (component != nullptr && component->IsSimulatingPhysics())
 			{
