@@ -250,7 +250,9 @@ void ACyberShooterPawn::Fire(FVector FireDirection)
 						rotation = FireDirection.RotateAngleAxis(random_angle, up).Rotation();
 					}
 
-					AActor* projectile = world->SpawnActor(Weapon->Projectile.Get(), &location, &rotation);
+					FActorSpawnParameters spawn_params;
+					spawn_params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::DontSpawnIfColliding;
+					AActor* projectile = world->SpawnActor(Weapon->Projectile.Get(), &location, &rotation, spawn_params);
 					if (projectile != nullptr)
 					{
 						Cast<ACyberShooterProjectile>(projectile)->SetSource(this);
