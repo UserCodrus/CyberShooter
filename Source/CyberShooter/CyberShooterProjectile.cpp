@@ -58,7 +58,7 @@ void ACyberShooterProjectile::SetSource(AActor* ProjectileSource)
 	if (Source == nullptr)
 	{
 		Source = ProjectileSource;
-		ProjectileMovement->AddVelocity(ProjectileSource->GetVelocity());
+		//ProjectileMovement->AddVelocity(ProjectileSource->GetVelocity());
 	}
 }
 
