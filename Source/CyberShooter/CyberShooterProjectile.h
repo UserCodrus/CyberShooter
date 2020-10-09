@@ -74,6 +74,9 @@ protected:
 	// The sound played when the bullet is destroyed
 	UPROPERTY(Category = "Effects|Sound", EditDefaultsOnly)
 		USoundBase* DestructionSound;
+	// The force feedback from impacts
+	UPROPERTY(Category = "Effects|Haptic", EditDefaultsOnly)
+		UForceFeedbackEffect* RumbleEffect;
 	
 	// The number of times the projectile can bounce
 	UPROPERTY(Category = "Projectile|Bounce", EditDefaultsOnly)

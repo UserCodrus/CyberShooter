@@ -173,11 +173,14 @@ protected:
 		class UCapsuleComponent* CollisionComponent;
 
 	// Particles that spawn on death
-	UPROPERTY(Category = "Components", EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = "Effects", EditAnywhere)
 		UParticleSystem* DeathParticles;
 	// the sound that plays on death
-	UPROPERTY(Category = "Components", EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(Category = "Effects", EditAnywhere)
 		USoundBase* DeathSound;
+	// The force feedback that plays on death
+	UPROPERTY(Category = "Effects", EditAnywhere)
+		UForceFeedbackEffect* DeathRumble;
 
 	float ShotCooldown;
 	float AbilityCooldown;

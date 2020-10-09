@@ -1,7 +1,7 @@
 // Copyright © 2020 Brian Faubion. All rights reserved.
 
 #include "CyberShooterProjectile.h"
-#include "CyberShooterPawn.h"
+#include "CyberShooterPlayer.h"
 #include "CyberShooterGameInstance.h"
 #include "BulletMovementComponent.h"
 #include "PhysicsInterface.h"
@@ -172,6 +172,21 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		{
 			object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
 		}
+		
+		// Apply force feedback
+		if (RumbleEffect != nullptr)
+		{
+			ACyberShooterPlayer* player = Cast<ACyberShooterPlayer>(OtherActor);
+			if (player != nullptr)
+			{
+				APlayerController* controller = Cast<APlayerController>(player->GetController());
+				if (controller != nullptr)
+				{
+					controller->ClientPlayForceFeedback(RumbleEffect);
+				}
+			}
+		}
+
 		if (OtherComp != nullptr && OtherComp->IsSimulatingPhysics())
 		{
 			OtherComp->AddImpulseAtLocation(GetVelocity().GetSafeNormal() * Force, GetActorLocation());
@@ -203,11 +218,18 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 			{
 				object->AddImpulse(direction * Impulse);
 			}
+
 			UPrimitiveComponent* component = Cast<UPrimitiveComponent>(actors[i]->GetRootComponent());
 			if (component != nullptr && component->IsSimulatingPhysics())
 			{
 				component->AddImpulseAtLocation(direction * Force, GetActorLocation());
 			}
+		}
+
+		// Apply force feedback
+		if (RumbleEffect != nullptr)
+		{
+			UGameplayStatics::SpawnForceFeedbackAtLocation(GetWorld(), RumbleEffect, GetActorLocation());
 		}
 	}
 }

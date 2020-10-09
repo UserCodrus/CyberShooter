@@ -130,6 +130,12 @@ void ACyberShooterPawn::Kill()
 		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
 	}
 
+	// Play force feedback
+	if (DeathRumble != nullptr)
+	{
+		UGameplayStatics::SpawnForceFeedbackAtLocation(GetWorld(), DeathRumble, GetActorLocation());
+	}
+
 	Destroy();
 }
 
