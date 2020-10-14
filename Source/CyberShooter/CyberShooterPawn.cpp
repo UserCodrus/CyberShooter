@@ -45,10 +45,12 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MinimumDamageAngle = -190.0f;
 	MaximumDamageAngle = 190.0f;
 	DamageImmunity = DAMAGETYPE_NONE;
+	DamageCooldownDuration = 0.1f;
 	EnvironmentDamage = 0.0f;
 
 	ShotCooldown = 0.0f;
 	AbilityCooldown = 0.0f;
+	DamageCooldown = 0.0f;
 }
 
 void ACyberShooterPawn::BeginPlay()
@@ -57,6 +59,49 @@ void ACyberShooterPawn::BeginPlay()
 
 	Health = MaxHealth;
 	Momentum = MaxMomentum;
+}
+
+void ACyberShooterPawn::Tick(float DeltaSeconds)
+{
+	// Set tick speed
+	DeltaSeconds *= TickSpeed;
+
+	// Reduce cooldowns
+	if (ShotCooldown > 0.0f)
+	{
+		ShotCooldown -= DeltaSeconds;
+	}
+	if (AbilityCooldown > 0.0f)
+	{
+		AbilityCooldown -= DeltaSeconds;
+	}
+
+	// Blink after taking damage
+	if (DamageCooldown > 0.0f)
+	{
+		DamageCooldown -= DeltaSeconds;
+		SetActorHiddenInGame(true);
+	}
+	else
+	{
+		SetActorHiddenInGame(false);
+	}
+
+	// Drain momentum when using abilities
+	if (Ability != nullptr && UseAbility)
+	{
+		// Drain momentum from using an ability
+		if (Ability->Continuous)
+		{
+			Momentum -= Ability->Cost * DeltaSeconds;
+			if (Momentum <= 0.0f)
+			{
+				// Deactivate the ability when momentum is empty
+				Momentum = 0.0f;
+				StopAbility();
+			}
+		}
+	}
 }
 
 /// ICombatInterface ///
@@ -83,6 +128,7 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 		{
 			Health -= Value;
 			ChangeMomentum(MomentumPenalty);
+			DamageCooldown = DamageCooldownDuration;
 
 			if (Health <= 0)
 			{
@@ -274,25 +320,6 @@ void ACyberShooterPawn::Fire(FVector FireDirection)
 		}
 	}
 }
-
-void ACyberShooterPawn::SustainAbility(float DeltaTime)
-{
-	if (Ability != nullptr && UseAbility)
-	{
-		// Drain momentum from using an ability
-		if (Ability->Continuous)
-		{
-			Momentum -= Ability->Cost * DeltaTime;
-			if (Momentum <= 0.0f)
-			{
-				// Deactivate the ability when momentum is empty
-				Momentum = 0.0f;
-				StopAbility();
-			}
-		}
-	}
-}
-
 
 FVector ACyberShooterPawn::GetForwardVector() const
 {

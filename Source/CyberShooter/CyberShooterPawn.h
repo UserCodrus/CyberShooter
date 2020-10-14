@@ -21,6 +21,7 @@ public:
 	ACyberShooterPawn();
 
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	/// ICombatInterface ///
 	
@@ -89,8 +90,6 @@ protected:
 
 	// Fire the pawn's current weapon
 	void Fire(FVector FireDirection);
-	// Manage the momentum drain of the pawn's ability
-	void SustainAbility(float DeltaTime);
 
 	/// Attributes ///
 	
@@ -107,27 +106,30 @@ protected:
 	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
 		float Momentum;
 	// The speed muliplier at max momentum
-	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumBonus;
 
 	// The momentum reward for killing this pawn
-	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumReward;
 	// The momentum lost upon taking damage
-	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumPenalty;
 
 	// Flags for which types of damage can affect the pawn
 	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageTypeFlag))
 		int32 DamageImmunity;
 	// The direction from which the pawn can be damaged
-	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere)
 		FVector DamageDirection;
+	// The duration the pawn will blink after taking damage
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere)
+		float DamageCooldownDuration;
 	// The minimum damage angle
-	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere)
 		float MinimumDamageAngle;
 	// The maximum damage angle
-	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere)
 		float MaximumDamageAngle;
 
 	// Damage the pawn is currently taking from its environment
@@ -184,5 +186,6 @@ protected:
 
 	float ShotCooldown;
 	float AbilityCooldown;
+	float DamageCooldown;
 };
 
