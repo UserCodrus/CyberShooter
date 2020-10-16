@@ -38,7 +38,8 @@ ACyberShooterPawn::ACyberShooterPawn()
 	Momentum = MaxMomentum;
 	MomentumBonus = 0.0f;
 	MomentumReward = 30.0f;
-	MomentumPenalty = 0.0f;
+	MomentumBlockSize = 0.0f;
+	MomentumPenalty = 1.0f;
 	TickSpeed = 1.0f;
 
 	DamageDirection = FVector(1.0f, 0.0f, 0.0f);
@@ -127,7 +128,7 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 		if (Value > 0)
 		{
 			Health -= Value;
-			ChangeMomentum(MomentumPenalty);
+			ChangeMomentum(-MomentumBlockSize * MomentumPenalty);
 			DamageCooldown = DamageCooldownDuration;
 
 			if (Health <= 0)

@@ -35,6 +35,7 @@ public:
 	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
 	FORCEINLINE float GetMomentum() const { return Momentum; }
 	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
+	FORCEINLINE float GetMomentumBlockSize() const { return MomentumBlockSize; }
 	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
 
 	// Stop firing and using abilities
@@ -105,14 +106,17 @@ protected:
 	// The pawn's current momentum
 	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
 		float Momentum;
-	// The speed muliplier at max momentum
+	// The speed muliplier added for each full block of momentum
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumBonus;
 
 	// The momentum reward for killing this pawn
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumReward;
-	// The momentum lost upon taking damage
+	// The size of momentum blocks, for UI display and upgrades
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
+		float MomentumBlockSize;
+	// The momentum this pawn loses when taking damage, relative to block size
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumPenalty;
 
