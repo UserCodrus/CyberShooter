@@ -125,6 +125,9 @@ protected:
 	// The momentum this pawn loses when taking damage, relative to block size
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumPenalty;
+	// The length of time in seconds that each block of momentum lasts when overcharged
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
+		float MomentumOverchargeDuration;
 
 	// Flags for which types of damage can affect the pawn
 	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, meta = (Bitmask, BitmaskEnum = EDamageTypeFlag))

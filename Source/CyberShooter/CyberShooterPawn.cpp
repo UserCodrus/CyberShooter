@@ -41,6 +41,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MomentumReward = 30.0f;
 	MomentumBlockSize = 0.0f;
 	MomentumPenalty = 1.0f;
+	MomentumOverchargeDuration = 1.0f;
 	TickSpeed = 1.0f;
 
 	DamageDirection = FVector(1.0f, 0.0f, 0.0f);
@@ -102,6 +103,18 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 				Momentum = 0.0f;
 				StopAbility();
 			}
+		}
+	}
+
+	// Drain overcharged momentum
+	if (Momentum > MaxMomentum)
+	{
+		Momentum -= MomentumBlockSize / MomentumOverchargeDuration * DeltaSeconds;
+
+		// Never drain momentum below the max
+		if (Momentum < MaxMomentum)
+		{
+			Momentum = MaxMomentum;
 		}
 	}
 }
@@ -395,11 +408,21 @@ void ACyberShooterPawn::SetCoreWorldRotation(FQuat Rotation)
 
 void ACyberShooterPawn::ChangeMomentum(float Value)
 {
-	Momentum += Value;
-
-	if (Momentum > MaxMomentum)
+	if (Value < 0.0f && Momentum > MaxMomentum)
 	{
+		// Remove all overcharge
 		Momentum = MaxMomentum;
+	}
+	else
+	{
+		// Add or remove momentum normally
+		Momentum += Value;
+	}
+
+	// Cap momentum
+	if (Momentum > MaxMomentum * 2)
+	{
+		Momentum = MaxMomentum * 2;
 	}
 	else if (Momentum < 0.0f)
 	{
