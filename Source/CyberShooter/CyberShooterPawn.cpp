@@ -34,6 +34,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 
 	MaxHealth = 10;
 	Health = 0;
+	Armor = 0;
 	MaxMomentum = 100.0f;
 	Momentum = MaxMomentum;
 	MomentumBonus = 0.0f;
@@ -127,8 +128,23 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 		
 		if (Value > 0)
 		{
-			Health -= Value;
-			ChangeMomentum(-MomentumBlockSize * MomentumPenalty);
+			if (Armor > 0)
+			{
+				// Damage armor
+				Armor -= Value;
+				if (Armor < 0)
+				{
+					// Remove overflow damage from health
+					Health += Armor;
+					ChangeMomentum(-MomentumBlockSize * MomentumPenalty);
+				}
+			}
+			else
+			{
+				// Damage health
+				Health -= Value;
+				ChangeMomentum(-MomentumBlockSize * MomentumPenalty);
+			}
 			DamageCooldown = DamageCooldownDuration;
 
 			if (Health <= 0)
@@ -402,4 +418,9 @@ void ACyberShooterPawn::SetTickSpeed(float NewSpeed)
 	{
 		TickSpeed = NewSpeed;
 	}
+}
+
+void ACyberShooterPawn::AddArmor(int32 Value)
+{
+	Armor = Value;
 }

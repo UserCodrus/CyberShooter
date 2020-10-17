@@ -33,6 +33,7 @@ public:
 
 	FORCEINLINE int32 GetHealth() const { return Health; }
 	FORCEINLINE int32 GetMaxHealth() const { return MaxHealth; }
+	FORCEINLINE int32 GetArmor() const { return Armor; }
 	FORCEINLINE float GetMomentum() const { return Momentum; }
 	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
 	FORCEINLINE float GetMomentumBlockSize() const { return MomentumBlockSize; }
@@ -72,6 +73,8 @@ public:
 	// Change the tick speed of the pawn
 	UFUNCTION(BlueprintCallable)
 		virtual void SetTickSpeed(float NewSpeed);
+	UFUNCTION(BlueprintCallable)
+		void AddArmor(int32 Value);
 
 	// Activate the pawn's weapon
 	void StartFiring();
@@ -100,6 +103,9 @@ protected:
 	// The pawn's current health
 	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
 		int32 Health;
+	// The pawn's current armor
+	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
+		int32 Armor;
 	// The maximum momentum for the pawn
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
 		float MaxMomentum;
