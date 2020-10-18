@@ -73,8 +73,16 @@ public:
 	// Change the tick speed of the pawn
 	UFUNCTION(BlueprintCallable)
 		virtual void SetTickSpeed(float NewSpeed);
+
+	// Set the pawn's armor
 	UFUNCTION(BlueprintCallable)
 		void AddArmor(int32 Value);
+	// Heal the pawn
+	UFUNCTION(BlueprintCallable)
+		void AddHealth(int32 Value);
+	// Increase the pawn's momentum by a specific number of bars
+	UFUNCTION(BlueprintCallable)
+		void AddMomentum(float Bars);
 
 	// Activate the pawn's weapon
 	void StartFiring();

@@ -447,3 +447,13 @@ void ACyberShooterPawn::AddArmor(int32 Value)
 {
 	Armor = Value;
 }
+
+void ACyberShooterPawn::AddHealth(int32 Value)
+{
+	Heal(Value);
+}
+
+void ACyberShooterPawn::AddMomentum(float Bars)
+{
+	ChangeMomentum(Bars * MomentumBlockSize);
+}
