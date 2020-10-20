@@ -72,7 +72,7 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 	// Reduce cooldowns
 	if (ShotCooldown > 0.0f)
 	{
-		ShotCooldown -= DeltaSeconds;
+		ShotCooldown -= DeltaSeconds * GetMomentumBonus();
 	}
 	if (AbilityCooldown > 0.0f)
 	{
@@ -215,6 +215,8 @@ void ACyberShooterPawn::Kill()
 	Destroy();
 }
 
+/// Accessor Functions ///
+
 void ACyberShooterPawn::StartFiring()
 {
 	FireWeapon = true;
@@ -298,6 +300,11 @@ bool ACyberShooterPawn::DeactivateAbility()
 		}
 	}
 	return false;
+}
+
+float ACyberShooterPawn::GetMomentumBonus() const
+{
+	return 1.0f + Momentum / MomentumBlockSize * MomentumBonus;
 }
 
 void ACyberShooterPawn::StopAction()

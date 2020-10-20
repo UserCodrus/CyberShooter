@@ -39,6 +39,8 @@ public:
 	FORCEINLINE float GetMomentumBlockSize() const { return MomentumBlockSize; }
 	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
 
+	float GetMomentumBonus() const;
+
 	// Stop firing and using abilities
 	void StopAction();
 
