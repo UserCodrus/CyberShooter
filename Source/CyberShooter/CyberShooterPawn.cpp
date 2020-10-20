@@ -39,7 +39,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	Momentum = MaxMomentum;
 	MomentumBonus = 0.0f;
 	MomentumReward = 30.0f;
-	MomentumBlockSize = 0.0f;
+	MomentumBlockSize = 20.0f;
 	MomentumPenalty = 1.0f;
 	MomentumOverchargeDuration = 1.0f;
 	TickSpeed = 1.0f;
