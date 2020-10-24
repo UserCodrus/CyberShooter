@@ -93,9 +93,11 @@ public:
 
 protected:
 	// Activate the current ability
-	void StartAbility();
+	UFUNCTION(BlueprintCallable)
+		void StartAbility();
 	// Deactivate the current ability
-	void StopAbility();
+	UFUNCTION(BlueprintCallable)
+		void StopAbility();
 
 	// Call the activate script for the current ability
 	bool ActivateAbility();
