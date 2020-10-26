@@ -129,7 +129,7 @@ protected:
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumBonus;
 	// The damage reduction the pawn uses when taking damage
-	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
+	UPROPERTY(Category = "Attributes|Combat", EditAnywhere, BlueprintReadWrite)
 		int32 Resistance;
 
 	// The momentum reward for killing this pawn
