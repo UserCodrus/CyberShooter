@@ -38,6 +38,7 @@ public:
 	FORCEINLINE float GetMaxMomentum() const { return MaxMomentum; }
 	FORCEINLINE float GetMomentumBlockSize() const { return MomentumBlockSize; }
 	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
+	FORCEINLINE bool HasIFrames() const { return DamageCooldown > 0.0f; }
 
 	float GetMomentumBonus() const;
 
@@ -127,6 +128,9 @@ protected:
 	// The speed muliplier added for each full block of momentum
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
 		float MomentumBonus;
+	// The damage reduction the pawn uses when taking damage
+	UPROPERTY(Category = "Attributes|Combat", EditInstanceOnly, BlueprintReadWrite)
+		int32 Resistance;
 
 	// The momentum reward for killing this pawn
 	UPROPERTY(Category = "Attributes|Combat", EditAnywhere)
@@ -181,10 +185,6 @@ protected:
 		bool UseAbility;
 
 	/// Movement ///
-
-	// The force mutiplier for physics collisions
-	UPROPERTY(Category = "Movement|Physics", EditAnywhere, BlueprintReadWrite)
-		float CollisionForce;
 
 	// The tick speed of the pawn
 	UPROPERTY(Category = "Time", EditAnywhere, BlueprintReadWrite)

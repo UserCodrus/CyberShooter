@@ -27,7 +27,6 @@ ACyberShooterPawn::ACyberShooterPawn()
 	CoreComponent->SetupAttachment(RootComponent);
 
 	// Set defaults
-	CollisionForce = 40.0f;
 	GunOffset = 50.0f;
 	FireWeapon = false;
 	UseAbility = false;
@@ -35,6 +34,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	MaxHealth = 10;
 	Health = 0;
 	Armor = 0;
+	Resistance = 0;
 	MaxMomentum = 100.0f;
 	Momentum = MaxMomentum;
 	MomentumBonus = 0.0f;
@@ -138,7 +138,8 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 				return;
 			}
 		}
-		
+
+		Value -= Resistance;
 		if (Value > 0)
 		{
 			if (Armor > 0)
