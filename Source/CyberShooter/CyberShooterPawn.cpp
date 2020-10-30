@@ -54,6 +54,8 @@ ACyberShooterPawn::ACyberShooterPawn()
 	ShotCooldown = 0.0f;
 	AbilityCooldown = 0.0f;
 	DamageCooldown = 0.0f;
+
+	Ephemeral = true;
 }
 
 void ACyberShooterPawn::BeginPlay()
@@ -213,7 +215,14 @@ void ACyberShooterPawn::Kill()
 		UGameplayStatics::SpawnForceFeedbackAtLocation(GetWorld(), DeathRumble, GetActorLocation());
 	}
 
-	Destroy();
+	if (Ephemeral)
+	{
+		Destroy();
+	}
+	else
+	{
+		DisablePawn();
+	}
 }
 
 /// Accessor Functions ///
@@ -226,6 +235,26 @@ void ACyberShooterPawn::StartFiring()
 void ACyberShooterPawn::StopFiring()
 {
 	FireWeapon = false;
+}
+
+void ACyberShooterPawn::DisablePawn()
+{
+	Disabled = true;
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
+
+	ShotCooldown = 0.0f;
+	AbilityCooldown = 0.0f;
+	DamageCooldown = 0.0f;
+}
+
+void ACyberShooterPawn::EnablePawn()
+{
+	Disabled = false;
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	SetActorTickEnabled(true);
 }
 
 void ACyberShooterPawn::StartAbility()

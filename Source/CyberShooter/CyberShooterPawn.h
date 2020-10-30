@@ -39,6 +39,7 @@ public:
 	FORCEINLINE float GetMomentumBlockSize() const { return MomentumBlockSize; }
 	FORCEINLINE float GetTickSpeed() const { return TickSpeed; }
 	FORCEINLINE bool HasIFrames() const { return DamageCooldown > 0.0f; }
+	FORCEINLINE bool IsDisabled() const { return Disabled; }
 
 	float GetMomentumBonus() const;
 
@@ -92,6 +93,13 @@ public:
 	// Deactivate the pawn's weapon
 	void StopFiring();
 
+	// Disable the pawn
+	UFUNCTION(CallInEditor, BlueprintCallable)
+		virtual void DisablePawn();
+	// Enable the pawn
+	UFUNCTION(CallInEditor, BlueprintCallable)
+		virtual void EnablePawn();
+
 protected:
 	// Activate the current ability
 	UFUNCTION(BlueprintCallable)
@@ -107,6 +115,12 @@ protected:
 
 	// Fire the pawn's current weapon
 	void Fire(FVector FireDirection);
+
+	/// Properties ///
+
+	// If set to true, this pawn will be ignored by the game until re-enabled
+	UPROPERTY(VisibleAnywhere)
+		bool Disabled;
 
 	/// Attributes ///
 	
@@ -164,6 +178,10 @@ protected:
 	// Damage the pawn is currently taking from its environment
 	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
 		float EnvironmentDamage;
+
+	// If set to true, this pawn will be destroyed when it is killed, otherwise it will simply be disabled
+	UPROPERTY(EditAnywhere)
+		bool Ephemeral;
 
 	/// Weapons ///
 
