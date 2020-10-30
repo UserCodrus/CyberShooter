@@ -64,6 +64,13 @@ void ACyberShooterPawn::BeginPlay()
 
 	Health = MaxHealth;
 	Momentum = MaxMomentum;
+
+	// Call DisablePawn to ensure that the pawn is properly disabled
+	if (Disabled)
+	{
+		Disabled = false;
+		DisablePawn();
+	}
 }
 
 void ACyberShooterPawn::Tick(float DeltaSeconds)
@@ -239,22 +246,28 @@ void ACyberShooterPawn::StopFiring()
 
 void ACyberShooterPawn::DisablePawn()
 {
-	Disabled = true;
-	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
-	SetActorTickEnabled(false);
+	if (!Disabled)
+	{
+		Disabled = true;
+		SetActorHiddenInGame(true);
+		SetActorEnableCollision(false);
+		SetActorTickEnabled(false);
 
-	ShotCooldown = 0.0f;
-	AbilityCooldown = 0.0f;
-	DamageCooldown = 0.0f;
+		ShotCooldown = 0.0f;
+		AbilityCooldown = 0.0f;
+		DamageCooldown = 0.0f;
+	}
 }
 
 void ACyberShooterPawn::EnablePawn()
 {
-	Disabled = false;
-	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
-	SetActorTickEnabled(true);
+	if (Disabled)
+	{
+		Disabled = false;
+		SetActorHiddenInGame(false);
+		SetActorEnableCollision(true);
+		SetActorTickEnabled(true);
+	}
 }
 
 void ACyberShooterPawn::StartAbility()
