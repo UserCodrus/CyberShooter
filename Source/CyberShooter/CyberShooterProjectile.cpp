@@ -159,18 +159,29 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 {
 	if (ExplosionRadius <= 0.0f)
 	{
+		// Apply physics
+		IPhysicsInterface* object = Cast<IPhysicsInterface>(OtherActor);
+		if (object != nullptr)
+		{
+			ACyberShooterPawn* pawn = Cast<ACyberShooterPawn>(OtherActor);
+			if (pawn != nullptr)
+			{
+				if (!pawn->HasIFrames())
+				{
+					object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
+				}
+			}
+			else
+			{
+				object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
+			}
+		}
+
 		// Apply damage
 		ICombatInterface* target = Cast<ICombatInterface>(OtherActor);
 		if (target != nullptr)
 		{
 			target->Damage(Damage, DamageType, this, Source);
-		}
-
-		// Apply physics
-		IPhysicsInterface* object = Cast<IPhysicsInterface>(OtherActor);
-		if (object != nullptr)
-		{
-			object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
 		}
 		
 		// Apply force feedback
@@ -186,11 +197,6 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 				}
 			}
 		}
-
-		if (OtherComp != nullptr && OtherComp->IsSimulatingPhysics())
-		{
-			OtherComp->AddImpulseAtLocation(GetVelocity().GetSafeNormal() * Force, GetActorLocation());
-		}
 	}
 	else
 	{
@@ -205,24 +211,29 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		{
 			FVector direction = (actors[i]->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 
+			// Apply physics
+			IPhysicsInterface* object = Cast<IPhysicsInterface>(actors[i]);
+			if (object != nullptr)
+			{
+				ACyberShooterPawn* pawn = Cast<ACyberShooterPawn>(OtherActor);
+				if (pawn != nullptr)
+				{
+					if (!pawn->HasIFrames())
+					{
+						object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
+					}
+				}
+				else
+				{
+					object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
+				}
+			}
+
 			// Apply damage
 			ICombatInterface* target = Cast<ICombatInterface>(actors[i]);
 			if (target != nullptr)
 			{
 				target->Damage(Damage, DamageType, this, Source);
-			}
-
-			// Apply physics
-			IPhysicsInterface* object = Cast<IPhysicsInterface>(actors[i]);
-			if (object != nullptr)
-			{
-				object->AddImpulse(direction * Impulse);
-			}
-
-			UPrimitiveComponent* component = Cast<UPrimitiveComponent>(actors[i]->GetRootComponent());
-			if (component != nullptr && component->IsSimulatingPhysics())
-			{
-				component->AddImpulseAtLocation(direction * Force, GetActorLocation());
 			}
 		}
 

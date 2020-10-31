@@ -168,6 +168,9 @@ protected:
 	// The duration the pawn will blink after taking damage
 	UPROPERTY(Category = "Attributes|Damage", EditAnywhere)
 		float DamageCooldownDuration;
+	// The blink rate when the pawn has taken damge
+	UPROPERTY(Category = "Attributes|Damage", EditAnywhere)
+		int32 BlinkRate;
 	// The minimum damage angle
 	UPROPERTY(Category = "Attributes|Damage", EditAnywhere)
 		float MinimumDamageAngle;

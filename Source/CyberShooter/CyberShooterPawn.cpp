@@ -50,6 +50,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	DamageImmunity = DAMAGETYPE_NONE;
 	DamageCooldownDuration = 0.1f;
 	EnvironmentDamage = 0.0f;
+	BlinkRate = 20;
 
 	ShotCooldown = 0.0f;
 	AbilityCooldown = 0.0f;
@@ -92,7 +93,8 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 	if (DamageCooldown > 0.0f)
 	{
 		DamageCooldown -= DeltaSeconds;
-		SetActorHiddenInGame(true);
+		int state = (int)(DamageCooldown * BlinkRate) & 2;
+		SetActorHiddenInGame(!(bool)state);
 	}
 	else
 	{
@@ -132,6 +134,9 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 
 void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin)
 {
+	if (DamageCooldown > 0.0f)
+		return;
+
 	if (!(DamageImmunity & DamageType))
 	{
 		if (Source != nullptr)
