@@ -181,7 +181,6 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AA
 				ACyberShooterPlayer* player = Cast<ACyberShooterPlayer>(Origin);
 				if (player != nullptr)
 				{
-					GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Yellow, "Enemy killed");
 					player->ChangeMomentum(MomentumReward);
 				}
 
@@ -230,10 +229,12 @@ void ACyberShooterPawn::Kill()
 	if (Ephemeral)
 	{
 		Destroy();
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "Pawn destroyed");
 	}
 	else
 	{
 		DisablePawn();
+		GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Yellow, "Pawn disabled");
 	}
 }
 
