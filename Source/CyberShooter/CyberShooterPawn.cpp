@@ -57,6 +57,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	DamageCooldown = 0.0f;
 
 	Ephemeral = true;
+	ShowPawn = true;
 }
 
 void ACyberShooterPawn::BeginPlay()
@@ -93,12 +94,19 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 	if (DamageCooldown > 0.0f)
 	{
 		DamageCooldown -= DeltaSeconds;
-		int state = (int)(DamageCooldown * BlinkRate) & 2;
-		SetActorHiddenInGame(!(bool)state);
+		if (ShowPawn)
+		{
+			int state = (int)(DamageCooldown * BlinkRate) & 2;
+			SetActorHiddenInGame(!(bool)state);
+		}
+		else
+		{
+			SetActorHiddenInGame(!ShowPawn);
+		}
 	}
 	else
 	{
-		SetActorHiddenInGame(false);
+		SetActorHiddenInGame(!ShowPawn);
 	}
 
 	// Drain momentum when using abilities

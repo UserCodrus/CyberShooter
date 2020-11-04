@@ -221,17 +221,18 @@ protected:
 		class UCapsuleComponent* CollisionComponent;
 
 	// Particles that spawn on death
-	UPROPERTY(Category = "Effects", EditAnywhere)
+	UPROPERTY(Category = "Effects|Particles", EditAnywhere)
 		UParticleSystem* DeathParticles;
 	// the sound that plays on death
-	UPROPERTY(Category = "Effects", EditAnywhere)
+	UPROPERTY(Category = "Effects|Sound", EditAnywhere)
 		USoundBase* DeathSound;
 	// The force feedback that plays on death
-	UPROPERTY(Category = "Effects", EditAnywhere)
+	UPROPERTY(Category = "Effects|Feedback", EditAnywhere)
 		UForceFeedbackEffect* DeathRumble;
 
 	float ShotCooldown;
 	float AbilityCooldown;
 	float DamageCooldown;
+	bool ShowPawn;
 };
 
