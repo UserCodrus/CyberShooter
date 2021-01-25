@@ -97,9 +97,6 @@ protected:
 	// The radius of projectile explosions
 	UPROPERTY(Category = "Projectile|Damage", EditDefaultsOnly)
 		float ExplosionRadius;
-	// The strength of projectile impacts of physics objects
-	UPROPERTY(Category = "Projectile|Damage", EditDefaultsOnly)
-		float Force;
 	// The strength of projectile impacts on players and enemies
 	UPROPERTY(Category = "Projectile|Damage", EditDefaultsOnly)
 		float Impulse;
