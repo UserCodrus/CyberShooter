@@ -219,6 +219,9 @@ protected:
 	// The collision capsule
 	UPROPERTY(Category = "Components", VisibleDefaultsOnly, BlueprintReadOnly)
 		class UCapsuleComponent* CollisionComponent;
+	// Particle effects for the pawn and abilities
+	UPROPERTY(Category = "Components", VisibleAnywhere)
+		UParticleSystemComponent* ParticleSystem;
 
 	// Particles that spawn on death
 	UPROPERTY(Category = "Effects|Particles", EditAnywhere)

@@ -10,6 +10,7 @@
 #include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Components/CapsuleComponent.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "Engine/CollisionProfile.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -25,6 +26,10 @@ ACyberShooterPawn::ACyberShooterPawn()
 
 	CoreComponent = CreateDefaultSubobject<USceneComponent>(TEXT("CoreComponent"));
 	CoreComponent->SetupAttachment(RootComponent);
+
+	// Create the particle system
+	ParticleSystem = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("ParticleSystem"));
+	ParticleSystem->SetupAttachment(CoreComponent);
 
 	// Set defaults
 	GunOffset = 50.0f;
@@ -298,6 +303,13 @@ void ACyberShooterPawn::StartAbility()
 					// Drain momentum and set the cooldown timer
 					Momentum -= Ability->Cost;
 					AbilityCooldown = Ability->Cooldown;
+
+					// Display particle effects
+					if (ParticleSystem != nullptr && Ability->Particles != nullptr)
+					{
+						ParticleSystem->SetTemplate(Ability->Particles);
+						ParticleSystem->Activate();
+					}
 				}
 			}
 		}
@@ -307,6 +319,13 @@ void ACyberShooterPawn::StartAbility()
 			if (ActivateAbility())
 			{
 				UseAbility = true;
+
+				// Display particle effects
+				if (ParticleSystem != nullptr && Ability->Particles != nullptr)
+				{
+					ParticleSystem->SetTemplate(Ability->Particles);
+					ParticleSystem->Activate();
+				}
 			}
 		}
 	}
@@ -324,6 +343,12 @@ void ACyberShooterPawn::StopAbility()
 				// Deactivate the ability and start the cooldown
 				DeactivateAbility();
 				AbilityCooldown = Ability->Cooldown;
+
+				// Cancel particle effects
+				if (ParticleSystem != nullptr && Ability->Particles != nullptr)
+				{
+					ParticleSystem->Deactivate();
+				}
 			}
 		}
 	}
