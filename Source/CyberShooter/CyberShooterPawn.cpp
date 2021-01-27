@@ -436,6 +436,16 @@ void ACyberShooterPawn::Fire(FVector FireDirection)
 
 			// Set the shot cooldown
 			ShotCooldown = Weapon->FireRate;
+
+			// Apply recoil if possible
+			if (Weapon->Recoil != 0.0f)
+			{
+				IPhysicsInterface* physics_object = Cast<IPhysicsInterface>(this);
+				if (physics_object != nullptr)
+				{
+					physics_object->AddImpulse(-FireDirection * Weapon->Recoil);
+				}
+			}
 		}
 	}
 }
