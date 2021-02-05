@@ -61,6 +61,7 @@ ACyberShooterPawn::ACyberShooterPawn()
 	AbilityCooldown = 0.0f;
 	DamageCooldown = 0.0f;
 
+	CanUseAbility = true;
 	Ephemeral = true;
 	ShowPawn = true;
 }
@@ -291,7 +292,7 @@ void ACyberShooterPawn::EnablePawn()
 
 void ACyberShooterPawn::StartAbility()
 {
-	if (Ability != nullptr && AbilityCooldown <= 0.0f)
+	if (Ability != nullptr && AbilityCooldown <= 0.0f && CanUseAbility)
 	{
 		if (!Ability->Continuous)
 		{

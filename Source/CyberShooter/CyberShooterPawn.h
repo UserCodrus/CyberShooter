@@ -236,6 +236,7 @@ protected:
 	float ShotCooldown;
 	float AbilityCooldown;
 	float DamageCooldown;
+	bool CanUseAbility;
 	bool ShowPawn;
 };
 
