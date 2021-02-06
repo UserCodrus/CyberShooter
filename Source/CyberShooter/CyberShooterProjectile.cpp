@@ -180,7 +180,7 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		ICombatInterface* target = Cast<ICombatInterface>(OtherActor);
 		if (target != nullptr)
 		{
-			target->Damage(Damage, DamageType, this, Source);
+			target->Damage(Damage, DamageType, OtherComp, this, Source);
 		}
 		
 		// Apply force feedback
@@ -232,7 +232,7 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 			ICombatInterface* target = Cast<ICombatInterface>(actors[i]);
 			if (target != nullptr)
 			{
-				target->Damage(Damage, DamageType, this, Source);
+				target->Damage(Damage, DamageType, OtherComp, this, Source);
 			}
 		}
 

@@ -146,7 +146,7 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 
 /// ICombatInterface ///
 
-void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, AActor* Source, AActor* Origin)
+void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, UPrimitiveComponent* HitComp, AActor* Source, AActor* Origin)
 {
 	if (DamageCooldown > 0.0f)
 		return;
