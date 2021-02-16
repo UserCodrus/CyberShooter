@@ -25,7 +25,7 @@ public:
 
 	/// ICombatInterface ///
 	
-	virtual void Damage(int32 Value, int32 DamageType, UPrimitiveComponent* HitComp = nullptr, AActor* Source = nullptr, AActor* Origin = nullptr) override;
+	virtual bool Damage(int32 Value, int32 DamageType, UForceFeedbackEffect* RumbleEffect, UPrimitiveComponent* HitComp = nullptr, AActor* Source = nullptr, AActor* Origin = nullptr) override;
 	virtual void Heal(int32 Value) override;
 	virtual void Kill() override;
 

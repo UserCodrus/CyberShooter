@@ -180,21 +180,7 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		ICombatInterface* target = Cast<ICombatInterface>(OtherActor);
 		if (target != nullptr)
 		{
-			target->Damage(Damage, DamageType, OtherComp, this, Source);
-		}
-		
-		// Apply force feedback
-		if (RumbleEffect != nullptr)
-		{
-			ACyberShooterPlayer* player = Cast<ACyberShooterPlayer>(OtherActor);
-			if (player != nullptr)
-			{
-				APlayerController* controller = Cast<APlayerController>(player->GetController());
-				if (controller != nullptr)
-				{
-					controller->ClientPlayForceFeedback(RumbleEffect);
-				}
-			}
+			target->Damage(Damage, DamageType, RumbleEffect, OtherComp, this, Source);
 		}
 	}
 	else
@@ -232,7 +218,7 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 			ICombatInterface* target = Cast<ICombatInterface>(actors[i]);
 			if (target != nullptr)
 			{
-				target->Damage(Damage, DamageType, OtherComp, this, Source);
+				target->Damage(Damage, DamageType, nullptr, OtherComp, this, Source);
 			}
 		}
 

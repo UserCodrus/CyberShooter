@@ -146,12 +146,9 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 
 /// ICombatInterface ///
 
-void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, UPrimitiveComponent* HitComp, AActor* Source, AActor* Origin)
+bool ACyberShooterPawn::Damage(int32 Value, int32 DamageType, UForceFeedbackEffect* RumbleEffect, UPrimitiveComponent* HitComp, AActor* Source, AActor* Origin)
 {
-	if (DamageCooldown > 0.0f)
-		return;
-
-	if (!(DamageImmunity & DamageType))
+	if (!(DamageImmunity & DamageType) && DamageCooldown <= 0.0f)
 	{
 		if (Source != nullptr)
 		{
@@ -163,7 +160,7 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, UPrimitiveComponen
 			// Determine if the hit failed
 			if (angle < MinimumDamageAngle || angle > MaximumDamageAngle)
 			{
-				return;
+				return false;
 			}
 		}
 
@@ -200,8 +197,12 @@ void ACyberShooterPawn::Damage(int32 Value, int32 DamageType, UPrimitiveComponen
 
 				Kill();
 			}
+
+			return true;
 		}
 	}
+
+	return false;
 }
 
 void ACyberShooterPawn::Heal(int32 Value)
