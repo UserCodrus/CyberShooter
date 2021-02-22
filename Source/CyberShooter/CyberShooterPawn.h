@@ -180,7 +180,7 @@ protected:
 
 	// Damage the pawn is currently taking from its environment
 	UPROPERTY(Category = "Attributes|Damage", EditAnywhere, BlueprintReadWrite)
-		float EnvironmentDamage;
+		int32 EnvironmentDamage;
 
 	// If set to true, this pawn will be destroyed when it is killed, otherwise it will simply be disabled
 	UPROPERTY(EditAnywhere)
