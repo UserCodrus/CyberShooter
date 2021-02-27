@@ -40,7 +40,6 @@ public:
 	// Reset static force to its default value
 	void ResetStaticForce();
 
-	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return MeshComponent; }
 	FORCEINLINE UBulletMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 
 protected:
@@ -50,12 +49,6 @@ protected:
 	// The projectile's collision
 	UPROPERTY(Category = "Components", VisibleAnywhere)
 		USphereComponent* CollisionComponent;
-	// The mesh for the projectile
-	UPROPERTY(Category = "Components", VisibleAnywhere)
-		UStaticMeshComponent* MeshComponent;
-	// The particle trail for the projectile
-	UPROPERTY(Category = "Components", VisibleAnywhere)
-		UParticleSystemComponent* ParticleSystem;
 
 	// The movement component for the projectile
 	UPROPERTY(Category = "Components", VisibleAnywhere)

@@ -26,16 +26,6 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	CollisionComponent->OnComponentHit.AddDynamic(this, &ACyberShooterProjectile::OnHit);
 	RootComponent = CollisionComponent;
 
-	// Create mesh component for the projectile sphere
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMesh0"));
-	MeshComponent->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
-	MeshComponent->SetupAttachment(RootComponent);
-
-	// Create the particle system
-	ParticleSystem = CreateDefaultSubobject< UParticleSystemComponent>(TEXT("ProjectileParticles0"));
-	ParticleSystem->SetAbsolute(false, false, true);
-	ParticleSystem->SetupAttachment(RootComponent);
-
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UBulletMovementComponent>(TEXT("ProjectileMovement0"));
 	ProjectileMovement->UpdatedComponent = CollisionComponent;
