@@ -429,6 +429,12 @@ void ACyberShooterPawn::Fire(FVector FireDirection)
 					if (projectile != nullptr)
 					{
 						Cast<ACyberShooterProjectile>(projectile)->SetSource(this);
+
+						// Play the firing sound
+						if (Weapon->Sound != nullptr)
+						{
+							UGameplayStatics::PlaySoundAtLocation(this, Weapon->Sound, GetActorLocation());
+						}
 					}
 
 					// Increment angle
