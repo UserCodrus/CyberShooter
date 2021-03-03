@@ -13,6 +13,10 @@ class ACyberShooterGameMode : public AGameModeBase
 
 public:
 	ACyberShooterGameMode();
+
+	// Load the current save slot from the game instance
+	UFUNCTION(Exec)
+		void LoadGame();
 };
 
 

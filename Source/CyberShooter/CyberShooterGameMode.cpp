@@ -2,6 +2,7 @@
 
 #include "CyberShooterGameMode.h"
 #include "CyberShooterPawn.h"
+#include "CyberShooterGameInstance.h"
 
 ACyberShooterGameMode::ACyberShooterGameMode()
 {
@@ -9,3 +10,11 @@ ACyberShooterGameMode::ACyberShooterGameMode()
 	DefaultPawnClass = ACyberShooterPawn::StaticClass();
 }
 
+void ACyberShooterGameMode::LoadGame()
+{
+	UCyberShooterGameInstance* instance = Cast<UCyberShooterGameInstance>(GetWorld()->GetGameInstance());
+	if (instance != nullptr)
+	{
+		instance->LoadGame();
+	}
+}
