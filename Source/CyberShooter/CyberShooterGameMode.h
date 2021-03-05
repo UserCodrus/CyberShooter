@@ -17,6 +17,12 @@ public:
 	// Load the current save slot from the game instance
 	UFUNCTION(Exec)
 		void LoadGame();
+	// Move to a level with a specified LocationID
+	UFUNCTION(Exec)
+		void LoadLevel(FString LevelName, int32 LocationID);
+	// Refill the player's stats
+	UFUNCTION(Exec)
+		void RefillPlayer();
 };
 
 
