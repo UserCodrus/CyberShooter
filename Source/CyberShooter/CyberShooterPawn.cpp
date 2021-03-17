@@ -552,7 +552,11 @@ void ACyberShooterPawn::SetTickSpeed(float NewSpeed)
 
 void ACyberShooterPawn::AddArmor(int32 Value)
 {
-	Armor = Value;
+	Armor += Value;
+	if (Armor > Health)
+	{
+		Armor = Health;
+	}
 }
 
 void ACyberShooterPawn::AddHealth(int32 Value)
