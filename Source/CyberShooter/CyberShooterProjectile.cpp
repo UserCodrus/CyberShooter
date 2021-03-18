@@ -152,17 +152,20 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 		IPhysicsInterface* object = Cast<IPhysicsInterface>(OtherActor);
 		if (object != nullptr)
 		{
-			ACyberShooterPawn* pawn = Cast<ACyberShooterPawn>(OtherActor);
-			if (pawn != nullptr)
+			if (object->CanMove())
 			{
-				if (!pawn->HasIFrames())
+				ACyberShooterPawn* pawn = Cast<ACyberShooterPawn>(OtherActor);
+				if (pawn != nullptr)
+				{
+					if (!pawn->HasIFrames())
+					{
+						object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
+					}
+				}
+				else
 				{
 					object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
 				}
-			}
-			else
-			{
-				object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
 			}
 		}
 
@@ -190,17 +193,20 @@ void ACyberShooterProjectile::ApplyImpact(AActor* OtherActor, UPrimitiveComponen
 			IPhysicsInterface* object = Cast<IPhysicsInterface>(actors[i]);
 			if (object != nullptr)
 			{
-				ACyberShooterPawn* pawn = Cast<ACyberShooterPawn>(OtherActor);
-				if (pawn != nullptr)
+				if (object->CanMove())
 				{
-					if (!pawn->HasIFrames())
+					ACyberShooterPawn* pawn = Cast<ACyberShooterPawn>(OtherActor);
+					if (pawn != nullptr)
+					{
+						if (!pawn->HasIFrames())
+						{
+							object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
+						}
+					}
+					else
 					{
 						object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
 					}
-				}
-				else
-				{
-					object->AddImpulse(GetVelocity().GetSafeNormal() * Impulse);
 				}
 			}
 
