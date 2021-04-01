@@ -30,7 +30,7 @@ ACyberShooterProjectile::ACyberShooterProjectile()
 	ProjectileMovement = CreateDefaultSubobject<UBulletMovementComponent>(TEXT("ProjectileMovement0"));
 	ProjectileMovement->UpdatedComponent = CollisionComponent;
 
-	InitialLifeSpan = 3.0f;
+	InitialLifeSpan = 8.0f;
 	NumBounces = 0;
 	BounceOnPawn = false;
 	ExplosionRadius = 0.0f;
