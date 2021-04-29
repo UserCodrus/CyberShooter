@@ -164,7 +164,11 @@ bool ACyberShooterPawn::Damage(int32 Value, int32 DamageType, UForceFeedbackEffe
 			}
 		}
 
-		Value -= Resistance;
+		// Subtract resistance from the damage dealt
+		if (DamageType != DAMAGETYPE_NONE)
+		{
+			Value -= Resistance;
+		}
 		if (Value > 0)
 		{
 			if (Armor > 0)
