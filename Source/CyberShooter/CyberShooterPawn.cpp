@@ -100,15 +100,9 @@ void ACyberShooterPawn::Tick(float DeltaSeconds)
 	if (DamageCooldown > 0.0f)
 	{
 		DamageCooldown -= DeltaSeconds;
-		if (ShowPawn)
-		{
-			int state = (int)(DamageCooldown * BlinkRate) & 2;
-			SetActorHiddenInGame(!(bool)state);
-		}
-		else
-		{
-			SetActorHiddenInGame(!ShowPawn);
-		}
+
+		int state = (int)(DamageCooldown * BlinkRate) & 2;
+		SetActorHiddenInGame(!(bool)state);
 	}
 	else
 	{

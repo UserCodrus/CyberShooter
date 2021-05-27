@@ -185,6 +185,9 @@ protected:
 	// If set to true, this pawn will be destroyed when it is killed, otherwise it will simply be disabled
 	UPROPERTY(EditAnywhere)
 		bool Ephemeral;
+	// If set to false, the pawn will be invisible when it isn't damaged
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		bool ShowPawn;
 
 	/// Weapons ///
 
@@ -237,6 +240,5 @@ protected:
 	float AbilityCooldown;
 	float DamageCooldown;
 	bool CanUseAbility;
-	bool ShowPawn;
 };
 
